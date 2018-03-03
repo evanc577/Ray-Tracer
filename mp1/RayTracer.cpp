@@ -65,8 +65,6 @@ void RayTracer::render() {
         return;
     }
 
-    auto start = std::chrono::high_resolution_clock::now();
-
     for (unsigned i = 0; i < image->height_; i++) {
         for (unsigned j = 0; j < image->width_; j++) {
             Pixel &p = image->getPixel(i, j);
@@ -76,10 +74,6 @@ void RayTracer::render() {
             p.a = 1;
         }
     }
-
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() << "ms\n";
-
 }
 
 void RayTracer::_clear() {

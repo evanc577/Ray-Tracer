@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <thread>
-#include <chrono>
 #include "lodepng/lodepng.h"
 #include "Image.h"
 
