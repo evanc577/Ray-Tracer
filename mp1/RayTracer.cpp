@@ -1,22 +1,22 @@
 #include "RayTracer.h"
 
 RayTracer::RayTracer() : image(NULL) {
-    //TODO implement ctor
+    setImageSize(100,100);
+}
+
+RayTracer::RayTracer(unsigned w, unsigned h) :image(NULL) {
+    setImageSize(w,h);
 }
 
 RayTracer::RayTracer(const RayTracer &other) {
-    //TODO implement copy ctor
     _copy(other);
 }
 
 RayTracer::~RayTracer() {
-    //TODO implement dtor
     _clear();
 }
 
 RayTracer & RayTracer::operator=(const RayTracer &other) {
-    //TODO implement assignment operator
-
     if (this != &other) {
         _clear();
         _copy(other);
@@ -25,7 +25,6 @@ RayTracer & RayTracer::operator=(const RayTracer &other) {
 }
 
 void RayTracer::outputImage(std::string filename) const {
-    //TODO implement outputImage
     if (!image) {
         std::cout << __FUNCTION__ << "() error, no image\n";
         return;
@@ -65,8 +64,11 @@ void RayTracer::render() {
         std::cout << __FUNCTION__ << "() error, image size not set\n";
         return;
     }
-    for (unsigned i = 0; i < image->width_; i++) {
-        for (unsigned j = 0; j < image->height_; j++) {
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    for (unsigned i = 0; i < image->height_; i++) {
+        for (unsigned j = 0; j < image->width_; j++) {
             Pixel &p = image->getPixel(i, j);
             p.r = float(i)/image->width_;
             p.g = float(j)/image->height_;
@@ -74,10 +76,13 @@ void RayTracer::render() {
             p.a = 1;
         }
     }
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(finish-start).count() << "ms\n";
+
 }
 
 void RayTracer::_clear() {
-    //TODO implement _clear()
     if (image) {
         delete image;
         image = NULL;
@@ -85,6 +90,5 @@ void RayTracer::_clear() {
 }
 
 void RayTracer::_copy(const RayTracer &other) {
-    //TODO implement _copy()
-    (void)other;
+    image = other.image;
 }

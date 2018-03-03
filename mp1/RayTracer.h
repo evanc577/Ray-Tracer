@@ -3,12 +3,15 @@
 
 #include <iostream>
 #include <string>
+#include <thread>
+#include <chrono>
 #include "lodepng/lodepng.h"
 #include "Image.h"
 
 class RayTracer {
     public:
         RayTracer();
+        RayTracer(unsigned w, unsigned h);
         RayTracer(const RayTracer &other);
         ~RayTracer();
         RayTracer & operator=(const RayTracer &other);
@@ -26,7 +29,6 @@ class RayTracer {
     private:
         void _copy(const RayTracer &other);
         void _clear();
-
 };
 
 #endif
