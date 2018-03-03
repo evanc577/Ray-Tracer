@@ -21,7 +21,6 @@ class RayTracer {
         void setImageSize(unsigned w, unsigned h);
 
         Image * image;
-
         void render();
 
     private:
