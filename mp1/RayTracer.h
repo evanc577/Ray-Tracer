@@ -25,12 +25,14 @@ class RayTracer {
         Image * image;
         void render(bool ortho);
 
+        bool antialias;
+        int aa_factor;
+
     private:
         void _copy(const RayTracer &other);
         void _clear();
 
         vec3 color(const Ray &r);
-
         float hitSphere(const vec3 &center, float radius, const Ray &r);
 };
 

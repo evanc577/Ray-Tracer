@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include "lodepng/lodepng.h"
 #include "RayTracer.h"
 
 
@@ -10,6 +9,8 @@ int main(int argc, char *argv[]) {
     int i = 1;
     int width = 1000;
     int height = 1000;
+    bool antialias = false;
+    int aa_factor = 1;
 
     // parse options
     while (i < argc) {
@@ -23,6 +24,8 @@ int main(int argc, char *argv[]) {
             std::cout << "    --help           show this help message\n";
             std::cout << "-p, --projection     set projection {persp|ortho}"
                 " (default: ortho)\n";
+            std::cout << "-a, --antialias      set antialias factor"
+                " (default: no antialiasing)\n";
             std::cout << "-o, --output         set output file"
                 " (default: output.png)\n";
             std::cout << "-w, --width          set output image width in px"
@@ -93,6 +96,20 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        // antialias flag
+        else if (arg == "-a" || arg == "--antialias") {
+            i++;
+            if (i == argc) {
+                std::cout << argv[0] << ": no antialias factor specified\n";
+                return 1;
+            }
+            else {
+                arg = argv[i];
+                aa_factor = stoi(arg);
+                antialias = true;
+            }
+        }
+
         // invalid flags
         else {
             std::cout << argv[0] << ": invalid option " << arg << "\n";
@@ -103,6 +120,9 @@ int main(int argc, char *argv[]) {
     }
 
     RayTracer r(width,height);
+
+    r.antialias = antialias;
+    r.aa_factor = aa_factor;
 
     std::cout << "rendering image ... ";
     r.render(ortho);

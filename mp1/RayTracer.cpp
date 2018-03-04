@@ -1,11 +1,17 @@
+#include <chrono>
+#include <random>
 #include "RayTracer.h"
 
 RayTracer::RayTracer() : image(NULL) {
     setImageSize(100,100);
+    antialias = false;
+    aa_factor = 1;
 }
 
 RayTracer::RayTracer(unsigned w, unsigned h) :image(NULL) {
     setImageSize(w,h);
+    antialias = false;
+    aa_factor = 1;
 }
 
 RayTracer::RayTracer(const RayTracer &other) {
@@ -66,6 +72,9 @@ void RayTracer::render(bool ortho) {
         return;
     }
 
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(seed);
+
     float lower = -0.5;
     float left = -0.5*float(image->width_)/float(image->height_);
 
@@ -79,16 +88,55 @@ void RayTracer::render(bool ortho) {
         for (int i = 0; i < image->width_; i++) {
             float u = float(i)/float(image->width_);
             float v = float(j)/float(image->height_);
-            if (ortho) {
-                Ray r(corner + u*horz + v*vert,
-                        corner_persp + u*horz + v*vert);
+
+            if (!antialias) {
+                Ray r;
+                if (ortho) {
+                    r.setOrigin(corner + u*horz + v*vert);
+                    r.setDirection(corner_persp + u*horz + v*vert);
+                }
+                else {
+                    r.setOrigin(origin);
+                    r.setDirection(corner_persp + u*horz + v*vert);
+                }
                 vec3 col = color(r);
+                std::cout << col.e[0] << " " << col.e[1] << " " << col.e[2] << "\n";
                 vec3 &pix = image->getPixel(i,j);
                 pix = col;
             }
+
             else {
-                Ray r(origin, corner_persp + u*horz + v*vert);
-                vec3 col = color(r);
+                vec3 col(0,0,0);
+                for (int k = 0; k < aa_factor; k++) {
+                    float range_begin = float(k)/float(aa_factor);
+                    float range_end = float(k+1)/float(aa_factor);
+                    std::uniform_real_distribution<float>
+                        dist(range_begin, range_end);
+                    float temp_u = u + dist(generator)/float(image->width_);
+                    float temp_v = v + dist(generator)/float(image->height_);
+
+                    // std::cout << range_begin << " " << range_end << " ";
+                    // std::cout << temp_u << " " << temp_v << "\n";
+
+                    Ray r;
+                    if (ortho) {
+                        r.setOrigin(corner + temp_u*horz + temp_v*vert);
+                        r.setDirection(corner_persp + temp_u*horz + temp_v*vert);
+                    }
+                    else {
+                        r.setOrigin(origin);
+                        r.setDirection(corner_persp + temp_u*horz + temp_v*vert);
+                    }
+
+                    // vec3 temp = color(r);
+                    // std::cout << temp.e[0] << " " << temp.e[1] << " " <<
+                        // temp.e[2] << "\n";
+
+                    col += color(r);
+                }
+                float aa_float = float(aa_factor);
+                col /= vec3(aa_float, aa_float, aa_float);
+                // std::cout << col.e[0] << " " << col.e[1] << " " << col.e[2] << "\n";
                 vec3 &pix = image->getPixel(i,j);
                 pix = col;
             }
