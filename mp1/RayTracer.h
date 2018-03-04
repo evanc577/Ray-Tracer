@@ -3,10 +3,12 @@
 
 #include <iostream>
 #include <string>
+#include <random>
 #include "lodepng/lodepng.h"
 #include "Image.h"
 #include "vec3.h"
 #include "Ray.h"
+#include "HittableList.h"
 
 class RayTracer {
     public:
@@ -22,18 +24,25 @@ class RayTracer {
         void setImage(const Image &im);
         void setImageSize(unsigned w, unsigned h);
 
-        Image * image;
+        void addHittable(Hittable *h);
+        void clearHittables();
+
+        Image * image_;
         void render(bool ortho);
 
-        bool antialias;
-        int aa_factor;
+        bool antialias_;
+        int aa_factor_;
 
     private:
         void _copy(const RayTracer &other);
         void _clear();
 
         vec3 color(const Ray &r);
-        float hitSphere(const vec3 &center, float radius, const Ray &r);
+        vec3 randomInUnitSphere();
+
+        HittableList hittables;
+
+        std::default_random_engine generator;
 };
 
 #endif

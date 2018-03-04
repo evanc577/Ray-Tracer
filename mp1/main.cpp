@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "RayTracer.h"
-
+#include "Sphere.h"
 
 int main(int argc, char *argv[]) {
     std::string filename = "output.png";
@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
             std::cout << "    --help           show this help message\n";
             std::cout << "-p, --projection     set projection {persp|ortho}"
                 " (default: ortho)\n";
-            std::cout << "-a, --antialias      set antialias factor"
+            std::cout << "-a, --antialias      enable antialiasing and set"
+                " AA factor"
                 " (default: no antialiasing)\n";
             std::cout << "-o, --output         set output file"
                 " (default: output.png)\n";
@@ -121,15 +122,26 @@ int main(int argc, char *argv[]) {
 
     RayTracer r(width,height);
 
-    r.antialias = antialias;
-    r.aa_factor = aa_factor;
+    Sphere s1(vec3(0,0,-1), 0.2);
+    Sphere s2(vec3(0.7,0,-2), 0.2);
+    Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
+    Sphere s4(vec3(0,-100.2,-1), 100);
 
-    std::cout << "rendering image ... ";
+    r.addHittable(&s1);
+    r.addHittable(&s2);
+    r.addHittable(&s3);
+    r.addHittable(&s4);
+
+    r.antialias_ = antialias;
+    r.aa_factor_ = aa_factor;
+
+    std::cout << "rendering image...\n";
     r.render(ortho);
     std::cout << "done\n";
 
-    std::cout << "writing to " << filename << " ... ";
+    std::cout << "writing to " << filename << "...\n";
     r.outputImage(filename);
     std::cout << "done\n";
+
     return 0;
 }
