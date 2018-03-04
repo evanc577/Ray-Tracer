@@ -2,6 +2,7 @@
 #include <string>
 #include "RayTracer.h"
 #include "Sphere.h"
+#include "Plane.h"
 
 int main(int argc, char *argv[]) {
     std::string filename = "output.png";
@@ -125,12 +126,15 @@ int main(int argc, char *argv[]) {
     Sphere s1(vec3(0,0,-1), 0.2);
     Sphere s2(vec3(0.7,0,-2), 0.2);
     Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
-    Sphere s4(vec3(0,-100.2,-1), 100);
+    // Sphere s4(vec3(0,-100.2,-1), 100);
+
+    Plane p1(vec3(0,-0.5,0), vec3(0,1,0.2));
 
     r.addHittable(&s1);
     r.addHittable(&s2);
     r.addHittable(&s3);
-    r.addHittable(&s4);
+    // r.addHittable(&s4);
+    r.addHittable(&p1);
 
     r.antialias_ = antialias;
     r.aa_factor_ = aa_factor;
