@@ -79,13 +79,13 @@ void RayTracer::render(bool ortho) {
     }
 
 
-    float lower = -0.5;
-    float left = -0.5*float(image_->width_)/float(image_->height_);
+    float left = -1;
+    float lower = -1*float(image_->height_)/float(image_->width_);
 
     vec3 corner(left, lower, 0.0);
     vec3 corner_persp(left, lower, -1.0);
-    vec3 horz(-2.0*left, 0.0, 0.0);
-    vec3 vert(0.0, 1.0, 0.0);
+    vec3 horz(2.0, 0.0, 0.0);
+    vec3 vert(0.0, -2.0*lower, 0.0);
     vec3 origin(0.0, 0.0, 0.0);
     vec3 orthoDirection = corner_persp - corner;
 
