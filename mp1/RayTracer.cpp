@@ -32,12 +32,17 @@ void RayTracer::outputImage(std::string filename) const {
 
     std::vector<unsigned char> temp;
     temp.resize(image->width_ * image->height_ * 4);
-    for (unsigned i = 0; i < image->width_; i++) {
-        for (unsigned j = 0; j < image->height_; j++) {
-            temp[4*j*image->width_ + 4*i + 0] = 255*image->getPixel(i,j).r;
-            temp[4*j*image->width_ + 4*i + 1] = 255*image->getPixel(i,j).g;
-            temp[4*j*image->width_ + 4*i + 2] = 255*image->getPixel(i,j).b;
-            temp[4*j*image->width_ + 4*i + 3] = 255*image->getPixel(i,j).a;
+    for (int i = 0; i < image->width_; i++) {
+        for (int j = 0; j < image->height_; j++) {
+            vec3 &p = image->getPixel(i,j);
+            temp[4*(image->height_-j-1)*image->width_ + 4*i + 0] =
+                (unsigned char)(255*p.r());
+            temp[4*(image->height_-j-1)*image->width_ + 4*i + 1] =
+                (unsigned char)(255*p.g());
+            temp[4*(image->height_-j-1)*image->width_ + 4*i + 2] =
+                (unsigned char)(255*p.b());
+            temp[4*(image->height_-j-1)*image->width_ + 4*i + 3] =
+                (unsigned char)(255);
         }
     }
 
@@ -49,31 +54,66 @@ void RayTracer::outputImage(std::string filename) const {
     }
 }
 
-void RayTracer::test() const {
-    std::cout << "test" << std::endl;
-}
-
 void RayTracer::setImageSize(unsigned w, unsigned h) {
     _clear();
     image = new Image(w, h);
 }
 
-void RayTracer::render() {
+void RayTracer::render(bool ortho) {
     //TODO implement render()
     if (!image) {
         std::cout << __FUNCTION__ << "() error, image size not set\n";
         return;
     }
 
-    for (unsigned i = 0; i < image->height_; i++) {
-        for (unsigned j = 0; j < image->width_; j++) {
-            Pixel &p = image->getPixel(i, j);
-            p.r = float(i)/image->width_;
-            p.g = float(j)/image->height_;
-            p.b = .2;
-            p.a = 1;
+    float lower = -0.5;
+    float left = -0.5*float(image->width_)/float(image->height_);
+
+    vec3 corner(left, lower, -0.0);
+    vec3 corner_persp(left, lower, -1.0);
+    vec3 horz(-2.0*left, 0.0, 0.0);
+    vec3 vert(0.0, 1.0, 0.0);
+    vec3 origin(0.0, 0.0, 0.0);
+
+    for (int j = 0; j < image->height_; j++) {
+        for (int i = 0; i < image->width_; i++) {
+            float u = float(i)/float(image->width_);
+            float v = float(j)/float(image->height_);
+            if (ortho) {
+                Ray r(corner + u*horz + v*vert,
+                        corner_persp + u*horz + v*vert);
+                vec3 col = color(r);
+                vec3 &pix = image->getPixel(i,j);
+                pix = col;
+            }
+            else {
+                Ray r(origin, corner_persp + u*horz + v*vert);
+                vec3 col = color(r);
+                vec3 &pix = image->getPixel(i,j);
+                pix = col;
+            }
         }
     }
+}
+
+vec3 RayTracer::color(const Ray &r) {
+    float t = hitSphere(vec3(0,0,-1), 0.2, r);
+    if (t > 0.0) {
+        // vec3 N = unit_vector(r.location(t) - vec3(0,0,-1));
+        // return 0.5*vec3(N.x()+1, N.y()+1, N.z()+1);
+        return vec3(1,0,0);
+    }
+    return vec3(0,0,0);
+}
+
+float RayTracer::hitSphere(const vec3 &center, float radius, const Ray &r) {
+    vec3 oc = r.origin() - center;
+    float a = dot(r.direction(), r.direction());
+    float b = 2.0 * dot(oc, r.direction());
+    float c = dot(oc, oc) - radius*radius;
+    float discriminant = b*b - 4*a*c;
+    if (discriminant < 0) return -1.0;
+    else return (-b - sqrt(discriminant)) / (2.0*a);
 }
 
 void RayTracer::_clear() {

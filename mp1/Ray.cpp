@@ -8,4 +8,4 @@ vec3 Ray::origin() const { return A_; }
 
 vec3 Ray::direction() const { return B_; }
 
-vec3 Ray::pointAtParameter(float t) const { return A_ + t*B_; }
+vec3 Ray::location(float t) const { return A_ + t*B_; }

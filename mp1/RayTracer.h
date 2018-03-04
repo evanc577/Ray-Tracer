@@ -5,6 +5,8 @@
 #include <string>
 #include "lodepng/lodepng.h"
 #include "Image.h"
+#include "vec3.h"
+#include "Ray.h"
 
 class RayTracer {
     public:
@@ -21,11 +23,15 @@ class RayTracer {
         void setImageSize(unsigned w, unsigned h);
 
         Image * image;
-        void render();
+        void render(bool ortho);
 
     private:
         void _copy(const RayTracer &other);
         void _clear();
+
+        vec3 color(const Ray &r);
+
+        float hitSphere(const vec3 &center, float radius, const Ray &r);
 };
 
 #endif

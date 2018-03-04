@@ -2,17 +2,17 @@
 
 Image::Image() : width_(0), height_(0) {}
 
-Image::Image(unsigned w, unsigned h) : width_(w), height_(h) {
-    image = new std::vector<std::vector<Pixel>>((w),std::vector<Pixel>(h));
+Image::Image(int w, int h) : width_(w), height_(h) {
+    image = new std::vector<std::vector<vec3>>((w),std::vector<vec3>(h));
 }
 
-bool Image::setPixel(unsigned x, unsigned y, const Pixel &p) {
+bool Image::setPixel(int x, int y, const vec3 &p) {
     if (x >= width_ || y >= height_) return false;
     image->at(x).at(y) = p;
     return true;
 }
 
-Pixel& Image::getPixel(unsigned x, unsigned y) const {
+vec3& Image::getPixel(int x, int y) const {
     return image->at(x).at(y);
 }
 

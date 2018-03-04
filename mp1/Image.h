@@ -2,23 +2,23 @@
 #define IMAGE_H
 
 #include <vector>
-#include "Pixel.h"
+#include "vec3.h"
 
 class Image {
     public:
         Image();
-        Image(unsigned w, unsigned h);
+        Image(int w, int h);
         Image(const Image &other);
         ~Image();
         Image & operator=(const Image &other);
 
-        Pixel& getPixel(unsigned x, unsigned y) const;
-        bool setPixel(unsigned x, unsigned y, const Pixel &p);
+        vec3& getPixel(int x, int y) const;
+        bool setPixel(int x, int y, const vec3 &p);
 
-        unsigned width_;
-        unsigned height_;
+        int width_;
+        int height_;
     private:
-        std::vector<std::vector<Pixel> > * image;
+        std::vector<std::vector<vec3> > * image;
         void _clear();
 
 };
