@@ -25,6 +25,8 @@ bool Sphere::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const 
             rec.t = temp;
             rec.p = r.location(rec.t);
             rec.normal = (rec.p - center) / radius;
+            rec.color = 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1,
+                    rec.normal.z()+1);
             return true;
         }
         temp = (-b + sqrt(discriminant))/(a);
@@ -32,9 +34,12 @@ bool Sphere::hit(const Ray& r, float t_min, float t_max, hit_record& rec) const 
             rec.t = temp;
             rec.p = r.location(rec.t);
             rec.normal = (rec.p - center) / radius;
+            rec.color = 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1,
+                    rec.normal.z()+1);
             return true;
         }
     }
     return false;
 }
+
 #endif

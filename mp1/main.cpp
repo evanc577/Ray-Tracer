@@ -3,6 +3,34 @@
 #include "RayTracer.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include "CheckerPlane.h"
+
+void printHelp(int argc, char *argv[]) {
+    (void)argc;
+    std::cout << "Usage: " << argv[0] << " [OPTION]...\n";
+    std::cout << "Generates an image via ray tracing\n\n";
+    std::cout << "List of options:\n";
+    std::cout << "    --help           show this help message\n";
+    std::cout << "-d, --default        use default parameters\n";
+    std::cout << "-p, --projection     set projection {persp|ortho}"
+        " (default: ortho)\n";
+    std::cout << "-a, --antialias      enable antialiasing and set"
+        " AA factor"
+        " (default: no antialiasing)\n";
+    std::cout << "-o, --output         set output file"
+        " (default: output.png)\n";
+    std::cout << "-w, --width          set output image width in px"
+        " (default: 1000px)\n";
+    std::cout << "-h, --height         set output image height in px"
+        " (default: 1000px)\n";
+    std::cout << "-m, --multithread    enable multithreading"
+        " (default disabled)\n";
+    std::cout << "\nExamples:\n";
+    std::cout << argv[0] << " -d\n";
+    std::cout << argv[0] << " -w 200 -h 200\n";
+    std::cout << argv[0] << " -w 2000 -h 1000 -a 16 -p persp "
+        "-o persp.png\n";
+}
 
 int main(int argc, char *argv[]) {
     std::string filename = "output.png";
@@ -12,29 +40,25 @@ int main(int argc, char *argv[]) {
     int height = 1000;
     bool antialias = false;
     int aa_factor = 1;
+    bool multithread = false;
 
     // parse options
+    if (argc == 1) {
+        printHelp(argc, argv);
+        return 0;
+    }
     while (i < argc) {
         std::string arg = argv[i];
 
         // help flag
         if (arg == "--help") {
-            std::cout << "Usage: " << argv[0] << " [OPTION]...\n";
-            std::cout << "Generates an image via ray tracing\n\n";
-            std::cout << "List of options:\n";
-            std::cout << "    --help           show this help message\n";
-            std::cout << "-p, --projection     set projection {persp|ortho}"
-                " (default: ortho)\n";
-            std::cout << "-a, --antialias      enable antialiasing and set"
-                " AA factor"
-                " (default: no antialiasing)\n";
-            std::cout << "-o, --output         set output file"
-                " (default: output.png)\n";
-            std::cout << "-w, --width          set output image width in px"
-                " (default: 1000px)\n";
-            std::cout << "-h, --height         set output image height in px"
-                " (default: 1000px)\n";
+            printHelp(argc, argv);
             return 0;
+        }
+
+        // default flag
+        if (arg == "-d" || arg == "--default") {
+            break;
         }
 
         // projection flag
@@ -112,6 +136,11 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        // multithread flag
+        else if (arg == "-m" || arg == "--multithread") {
+            multithread = true;
+        }
+
         // invalid flags
         else {
             std::cout << argv[0] << ": invalid option " << arg << "\n";
@@ -124,28 +153,28 @@ int main(int argc, char *argv[]) {
     RayTracer r(width,height);
 
     Sphere s1(vec3(0,0,-1), 0.2);
-    Sphere s2(vec3(0.7,0,-2), 0.2);
-    Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
-    // Sphere s4(vec3(0,-100.2,-1), 100);
-
-    Plane p1(vec3(0,-0.5,0), vec3(0,1,0.2));
-
     r.addHittable(&s1);
+
+    Sphere s2(vec3(0.7,0,-2), 0.2);
     r.addHittable(&s2);
+
+    Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
     r.addHittable(&s3);
-    // r.addHittable(&s4);
+
+    CheckerPlane p1(vec3(0,-1,0), vec3(0,1,0.5));
+    p1.tile_size = 0.2;
     r.addHittable(&p1);
+
+    // Plane p2(vec3(0,0,-100), vec3(0,0,1));
+    // r.addHittable(&p2);
 
     r.antialias_ = antialias;
     r.aa_factor_ = aa_factor;
+    r.ortho = ortho;
+    r.multithread = multithread;
 
-    std::cout << "rendering image...\n";
-    r.render(ortho);
-    std::cout << "done\n";
-
-    std::cout << "writing to " << filename << "...\n";
+    r.render();
     r.outputImage(filename);
-    std::cout << "done\n";
 
     return 0;
 }

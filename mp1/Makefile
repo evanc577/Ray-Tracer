@@ -17,7 +17,7 @@ RayTracer.o : RayTracer.cpp RayTracer.h Image.o lodepng.o vec3.h Ray.h \
 	HittableList.h
 	$(CXX) -c $(CXXFLAGS) RayTracer.cpp
 
-main.o : main.cpp RayTracer.o Image.o Sphere.h Plane.h
+main.o : main.cpp RayTracer.o Image.o Sphere.h Plane.h CheckerPlane.h
 	$(CXX) -c $(CXXFLAGS) main.cpp
 
 lodepng.o : lodepng/lodepng.cpp lodepng/lodepng.h

@@ -20,8 +20,10 @@ bool Plane::hit(const Ray &r, float t_min, float t_max, hit_record &rec) const {
         float t = dot((point - r.origin()), normal) / temp;
         if (t < t_max && t > t_min) {
             rec.t = t;
-            rec.p - r.location(rec.t);
+            rec.p = r.location(rec.t);
             rec.normal = normal;
+            rec.color = 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1,
+                    rec.normal.z()+1);
             return true;
         }
     }

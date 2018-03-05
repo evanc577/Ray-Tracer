@@ -28,14 +28,20 @@ class RayTracer {
         void clearHittables();
 
         Image * image_;
-        void render(bool ortho);
+        void render();
+
+        bool ortho;
 
         bool antialias_;
         int aa_factor_;
 
+        bool multithread;
+
     private:
         void _copy(const RayTracer &other);
         void _clear();
+
+        void renderSection(int start_row, int end_row);
 
         vec3 color(const Ray &r);
         vec3 randomInUnitSphere();

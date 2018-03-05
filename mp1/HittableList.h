@@ -26,6 +26,10 @@ class HittableList : public Hittable {
             return hit;
         }
 
+        virtual vec3 color(hit_record &rec) const {
+            return rec.color;
+        }
+
         std::vector<Hittable *> list_;
 };
 

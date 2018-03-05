@@ -1,12 +1,15 @@
 #include <chrono>
 #include <random>
 #include <limits>
+#include <thread>
 #include "RayTracer.h"
 
 RayTracer::RayTracer() : image_(NULL) {
     setImageSize(100,100);
     antialias_ = false;
     aa_factor_ = 1;
+    multithread = false;
+    ortho = true;
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
@@ -16,6 +19,8 @@ RayTracer::RayTracer(unsigned w, unsigned h) :image_(NULL) {
     setImageSize(w,h);
     antialias_ = false;
     aa_factor_ = 1;
+    multithread = false;
+    ortho = true;
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
@@ -38,10 +43,15 @@ RayTracer & RayTracer::operator=(const RayTracer &other) {
 }
 
 void RayTracer::outputImage(std::string filename) const {
+    std::cout << "writing to " << filename << "...\n";
     if (!image_) {
         std::cout << __FUNCTION__ << "() error, no image\n";
         return;
     }
+
+    // time start
+    std::chrono::high_resolution_clock::time_point t1 =
+        std::chrono::high_resolution_clock::now();
 
     std::vector<unsigned char> temp;
     temp.resize(image_->width_ * image_->height_ * 4);
@@ -65,6 +75,13 @@ void RayTracer::outputImage(std::string filename) const {
         std::cout << "encoder error " << error << ": "<<
             lodepng_error_text(error) << std::endl;
     }
+
+    // time end
+    std::chrono::high_resolution_clock::time_point t2 =
+        std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>
+        ( t2 - t1 ).count();
+    std::cout << "done, took " << duration << "ms\n";
 }
 
 void RayTracer::setImageSize(unsigned w, unsigned h) {
@@ -72,13 +89,7 @@ void RayTracer::setImageSize(unsigned w, unsigned h) {
     image_ = new Image(w, h);
 }
 
-void RayTracer::render(bool ortho) {
-    if (!image_) {
-        std::cout << __FUNCTION__ << "() error, image size not set\n";
-        return;
-    }
-
-
+void RayTracer::renderSection(int start_row, int end_row) {
     float left = -1;
     float lower = -1*float(image_->height_)/float(image_->width_);
 
@@ -95,7 +106,7 @@ void RayTracer::render(bool ortho) {
         antialias_ = false;
     }
 
-    for (int j = 0; j < image_->height_; j++) {
+    for (int j = start_row; j <= end_row; j++) {
         for (int i = 0; i < image_->width_; i++) {
             float u = float(i)/float(image_->width_);
             float v = float(j)/float(image_->height_);
@@ -150,10 +161,53 @@ void RayTracer::render(bool ortho) {
     }
 }
 
+void RayTracer::render() {
+    std::cout << "rendering image...\n";
+    if (!image_) {
+        std::cout << __FUNCTION__ << "() error, image size not set\n";
+        return;
+    }
+
+    // time start
+    std::chrono::high_resolution_clock::time_point t1 =
+        std::chrono::high_resolution_clock::now();
+
+    if (multithread) {
+        int num_threads = std::thread::hardware_concurrency();
+        if (num_threads < 1) num_threads = 1;
+        std::vector<std::thread> threads(num_threads);
+
+        int start_row = 0;
+        int end_row = image_->height_ / num_threads -1;
+        for (std::vector<std::thread>::iterator it = threads.begin();
+                it != threads.end(); ++it) {
+            (*it) = std::thread([=] { renderSection(start_row, end_row); });
+            start_row = end_row+1;
+            end_row += image_->height_ / num_threads;
+            if (end_row >= image_->height_) end_row = image_->height_-1;
+        }
+        for (std::vector<std::thread>::iterator it = threads.begin();
+                it != threads.end(); ++it) {
+            (*it).join();
+        }
+    }
+
+    else {
+        renderSection(0, image_->height_-1);
+    }
+
+    // time end
+    std::chrono::high_resolution_clock::time_point t2 =
+        std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>
+        ( t2 - t1 ).count();
+    std::cout << "done, took " << duration << "ms\n";
+}
+
 vec3 RayTracer::color(const Ray &r) {
     hit_record rec;
     if (hittables.hit(r,0.0,std::numeric_limits<float>::max(),rec)) {
-        return 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1, rec.normal.z()+1);
+        return hittables.color(rec);
     }
     else {
         return vec3(0,0,0);
