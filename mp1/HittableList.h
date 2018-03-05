@@ -50,7 +50,9 @@ class HittableList : public Hittable {
             }
 
             vec3 temp = ambient + diffuse;
-            max_val = fmax(max_val, temp.length());
+            max_val = fmax(max_val, temp.x());
+            max_val = fmax(max_val, temp.y());
+            max_val = fmax(max_val, temp.z());
 
             return temp;
         }

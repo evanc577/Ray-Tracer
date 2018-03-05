@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
 
     // Lights
     AmbientLight l1;
-    l1.ia = vec3(0.5,0.5,0.5);
+    l1.ia = vec3(0.2,0.2,0.2);
     r.addLight(&l1);
 
     DirectionalLight l2;
