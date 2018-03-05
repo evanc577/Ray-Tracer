@@ -189,29 +189,27 @@ int main(int argc, char *argv[]) {
     r.addHittable(&s1);
 
     Sphere s2(vec3(0.7,0,-2), 0.2);
-    s2.ka = vec3(0,1,0);
-    s2.kd = vec3(0,1,0);
+    s2.ka = vec3(0,0.8,0);
+    s2.kd = vec3(0,0.8,0);
     r.addHittable(&s2);
 
-    Sphere s3(vec3(-0.5,-0.1,-1), 0.4);
-    s3.ka = vec3(0.2,0.1,1);
-    s3.kd = vec3(0.2,0.1,1);
+    Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
+    s3.ka = vec3(0.2,0.1,0.8);
+    s3.kd = vec3(0.2,0.1,0.8);
     r.addHittable(&s3);
 
-    Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
-    s4.ka = vec3(0.1,0.9,0.9);
-    s4.kd = vec3(0.1,0.9,0.9);
-    r.addHittable(&s4);
+    // Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
+    // s4.ka = vec3(0.1,0.9,0.9);
+    // s4.kd = vec3(0.1,0.9,0.9);
+    // r.addHittable(&s4);
 
     // Planes
-    CheckerPlane p1(vec3(0,-2,0), unit_vector(vec3(0,1,0.8)));
+    CheckerPlane p1(vec3(0,-1,0), unit_vector(vec3(0,1,0.5)));
     p1.ka1 = vec3(0.9,0.9,0.9);
     p1.ka2 = vec3(0.1,0.1,0.1);
     p1.kd1 = p1.ka1;
     p1.kd2 = p1.ka2;
-
-    p1.tile_size = 0.5;
-    p1.kd = vec3(0.7,1,0.8);
+    p1.tile_size = 0.2;
     r.addHittable(&p1);
 
 
