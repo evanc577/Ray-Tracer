@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string>
 #include <iostream>
 
 class vec3  {
@@ -37,6 +38,7 @@ class vec3  {
         }
         inline void make_unit_vector();
 
+        inline std::string to_string();
 
         float e[3];
 };
@@ -143,6 +145,11 @@ inline vec3& vec3::operator/=(const float t) {
 
 inline vec3 unit_vector(vec3 v) {
     return v / v.length();
+}
+
+inline std::string vec3::to_string() {
+    return "<" + std::to_string(e[0]) + "," + std::to_string(e[1]) + 
+        "," + std::to_string(e[2]) + ">";
 }
 
 #endif

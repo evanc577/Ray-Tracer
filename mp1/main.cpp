@@ -4,6 +4,8 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "CheckerPlane.h"
+#include "AmbientLight.h"
+#include "DirectionalLight.h"
 
 void printHelp(int argc, char *argv[]) {
     (void)argc;
@@ -28,8 +30,8 @@ void printHelp(int argc, char *argv[]) {
     std::cout << "\nExamples:\n";
     std::cout << argv[0] << " -d\n";
     std::cout << argv[0] << " -w 200 -h 200\n";
-    std::cout << argv[0] << " -w 2000 -h 1000 -a 16 -p persp "
-        "-o persp.png\n";
+    std::cout << argv[0] << " -w 3840 -h 2160 -a 16 -p persp "
+        "-m -o persp.png\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -152,27 +154,68 @@ int main(int argc, char *argv[]) {
 
     RayTracer r(width,height);
 
-    Sphere s1(vec3(0,0,-1), 0.2);
-    r.addHittable(&s1);
-
-    Sphere s2(vec3(0.7,0,-2), 0.2);
-    r.addHittable(&s2);
-
-    Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
-    r.addHittable(&s3);
-
-    CheckerPlane p1(vec3(0,-1,0), vec3(0,1,0.5));
-    p1.tile_size = 0.2;
-    r.addHittable(&p1);
-
-    // Plane p2(vec3(0,0,-100), vec3(0,0,1));
-    // r.addHittable(&p2);
-
+    // set options
     r.antialias_ = antialias;
     r.aa_factor_ = aa_factor;
     r.ortho = ortho;
     r.multithread = multithread;
 
+
+    // Lights
+    AmbientLight l1;
+    l1.ia = vec3(0.5,0.5,0.5);
+    r.addLight(&l1);
+
+    DirectionalLight l2;
+    l2.direction = unit_vector(vec3(1,-0.4,-1));
+    l2.color = vec3(0.6,0.6,0.6);
+    r.addLight(&l2);
+
+    DirectionalLight l3;
+    l3.direction = unit_vector(vec3(-1,-0.4,-1));
+    l3.color = vec3(0.3,0.3,0.3);
+    r.addLight(&l3);
+
+    DirectionalLight l4;
+    l4.direction = unit_vector(vec3(0,-1,0));
+    l3.color = vec3(0.9,0.9,0.9);
+    r.addLight(&l4);
+
+
+    // Spheres
+    Sphere s1(vec3(0,0,-1), 0.2);
+    s1.ka = vec3(1,0.2,0.3);
+    s1.kd = vec3(1,0.2,0.3);
+    r.addHittable(&s1);
+
+    Sphere s2(vec3(0.7,0,-2), 0.2);
+    s2.ka = vec3(0,1,0);
+    s2.kd = vec3(0,1,0);
+    r.addHittable(&s2);
+
+    Sphere s3(vec3(-0.5,-0.1,-1), 0.4);
+    s3.ka = vec3(0.2,0.1,1);
+    s3.kd = vec3(0.2,0.1,1);
+    r.addHittable(&s3);
+
+    Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
+    s4.ka = vec3(0.1,0.9,0.9);
+    s4.kd = vec3(0.1,0.9,0.9);
+    r.addHittable(&s4);
+
+    // Planes
+    CheckerPlane p1(vec3(0,-2,0), unit_vector(vec3(0,1,0.8)));
+    p1.ka1 = vec3(0.9,0.9,0.9);
+    p1.ka2 = vec3(0.1,0.1,0.1);
+    p1.kd1 = p1.ka1;
+    p1.kd2 = p1.ka2;
+
+    p1.tile_size = 0.5;
+    p1.kd = vec3(0.7,1,0.8);
+    r.addHittable(&p1);
+
+
+    // render and write image to file
     r.render();
     r.outputImage(filename);
 

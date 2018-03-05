@@ -1,7 +1,3 @@
-#include <chrono>
-#include <random>
-#include <limits>
-#include <thread>
 #include "RayTracer.h"
 
 RayTracer::RayTracer() : image_(NULL) {
@@ -168,6 +164,8 @@ void RayTracer::render() {
         return;
     }
 
+    lights.updateValues();
+
     // time start
     std::chrono::high_resolution_clock::time_point t1 =
         std::chrono::high_resolution_clock::now();
@@ -196,6 +194,15 @@ void RayTracer::render() {
         renderSection(0, image_->height_-1);
     }
 
+    if (hittables.max_val > 1) {
+        for (int i = 0; i < image_->width_; i++) {
+            for (int j = 0; j < image_->height_; j++) {
+                vec3 & p = image_->getPixel(i,j);
+                p /= hittables.max_val;
+            }
+        }
+    }
+
     // time end
     std::chrono::high_resolution_clock::time_point t2 =
         std::chrono::high_resolution_clock::now();
@@ -206,8 +213,8 @@ void RayTracer::render() {
 
 vec3 RayTracer::color(const Ray &r) {
     hit_record rec;
-    if (hittables.hit(r,0.0,std::numeric_limits<float>::max(),rec)) {
-        return hittables.color(rec);
+    if (hittables.hit(r,0.0,std::numeric_limits<float>::max(),rec, lights)) {
+        return hittables.color(rec, lights, r.direction());
     }
     else {
         return vec3(0,0,0);
@@ -220,6 +227,11 @@ void RayTracer::addHittable(Hittable *h) {
 
 void RayTracer::clearHittables() {
     hittables.list_.clear();
+}
+
+void RayTracer::addLight(Light *l) {
+    lights.list.push_back(l);
+
 }
 
 void RayTracer::_clear() {
