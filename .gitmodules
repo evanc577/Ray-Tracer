@@ -1,6 +1,3 @@
-[submodule "mp1/lodepng"]
-	path = mp1/lodepng
-	url = https://github.com/lvandeve/lodepng.git
 [submodule "mp1/glm"]
 	path = mp1/glm
 	url = https://github.com/g-truc/glm.git
