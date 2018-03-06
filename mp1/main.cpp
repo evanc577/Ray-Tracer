@@ -29,7 +29,7 @@ void printHelp(int argc, char *argv[]) {
     std::cout << "-m, --multithread    enable multithreading"
         " (default disabled)\n";
     std::cout << "-s, --sRGB           transform to sRGB color space"
-        " (default disabled)\n";
+        " (experimental) (default disabled)\n";
     std::cout << "\nExamples:\n";
     std::cout << argv[0] << " -d\n";
     std::cout << argv[0] << " -w 200 -h 200\n";

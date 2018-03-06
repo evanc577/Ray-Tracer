@@ -76,7 +76,7 @@ void RayTracer::setImageSize(unsigned w, unsigned h) {
     image_ = new Image(w, h);
 }
 
-void RayTracer::renderSection(int start_row, int end_row) {
+void RayTracer::renderSection(int thread, int num_threads) {
     float left = -1;
     float lower = -1*float(image_->height_)/float(image_->width_);
 
@@ -93,8 +93,10 @@ void RayTracer::renderSection(int start_row, int end_row) {
         antialias_ = false;
     }
 
-    for (int j = start_row; j <= end_row; j++) {
+    for (int j = 0; j < image_->height_; j++) {
         for (int i = 0; i < image_->width_; i++) {
+            if ((i+j) % num_threads != thread) continue;
+
             float u = float(i)/float(image_->width_);
             float v = float(j)/float(image_->height_);
 
@@ -166,14 +168,11 @@ void RayTracer::render() {
         if (num_threads < 1) num_threads = 1;
         std::vector<std::thread> threads(num_threads);
 
-        int start_row = 0;
-        int end_row = image_->height_ / num_threads -1;
+        int thread = 0;
         for (std::vector<std::thread>::iterator it = threads.begin();
                 it != threads.end(); ++it) {
-            (*it) = std::thread([=] { renderSection(start_row, end_row); });
-            start_row = end_row+1;
-            end_row += image_->height_ / num_threads;
-            if (end_row >= image_->height_) end_row = image_->height_-1;
+            (*it) = std::thread([=] { renderSection(thread, num_threads); });
+            thread++;
         }
         for (std::vector<std::thread>::iterator it = threads.begin();
                 it != threads.end(); ++it) {
@@ -183,7 +182,7 @@ void RayTracer::render() {
 
     // if multithread is disabled
     else {
-        renderSection(0, image_->height_-1);
+        renderSection(0, 1);
     }
 
     // transform to sRGB

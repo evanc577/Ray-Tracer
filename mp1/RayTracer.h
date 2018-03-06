@@ -50,7 +50,7 @@ class RayTracer {
         void _copy(const RayTracer &other);
         void _clear();
 
-        void renderSection(int start_row, int end_row);
+        void renderSection(int thread, int num_threads);
 
         void linearToSRGB();
         float sRGB_max;
