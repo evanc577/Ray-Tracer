@@ -1,11 +1,11 @@
 #include "LightList.h"
 
 LightList::LightList() : Light() {
-    ia = vec3(0,0,0);
+    ia = glm::vec3(0,0,0);
 }
 
 LightList::LightList(std::vector<Light *> l) : Light() {
-    ia = vec3(0,0,0);
+    ia = glm::vec3(0,0,0);
     list = l;
 }
 
@@ -16,11 +16,11 @@ void LightList::updateValues() {
     }
 }
 
-bool LightList::AtPoint(const vec3 &p, vec3 &c, vec3 &d) {
-    c = vec3(0,0,0);
-    d = vec3(0,0,0);
-    vec3 temp_c(0,0,0);
-    vec3 temp_d(0,0,0);
+bool LightList::AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d) {
+    c = glm::vec3(0,0,0);
+    d = glm::vec3(0,0,0);
+    glm::vec3 temp_c(0,0,0);
+    glm::vec3 temp_d(0,0,0);
     bool directional = false;
     for (std::vector<Light *>::const_iterator it = list.begin();
             it != list.end(); ++it) {
@@ -30,6 +30,6 @@ bool LightList::AtPoint(const vec3 &p, vec3 &c, vec3 &d) {
             c += temp_c;
         }
     }
-    d = unit_vector(d);
+    d = glm::normalize(d);
     return directional;
 }

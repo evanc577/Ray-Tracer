@@ -9,7 +9,7 @@ class LightList : public Light {
         LightList();
         LightList(std::vector<Light *> l);
 
-        virtual bool AtPoint(const vec3 &p, vec3 &c, vec3 &d);
+        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d);
 
         void updateValues();
         std::vector<Light *> list;

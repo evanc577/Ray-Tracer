@@ -16,7 +16,7 @@ class HittableList : public Hittable {
         virtual bool hit(const Ray &r, float t_min, float t_max,
                 hit_record &rec, Light &l) const;
 
-        virtual vec3 color(hit_record &rec, Light &l, const vec3 &v);
+        virtual glm::vec3 color(hit_record &rec, Light &l, const glm::vec3 &v);
 
 
         std::vector<Hittable *> list_;

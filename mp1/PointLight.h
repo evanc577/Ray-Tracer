@@ -6,17 +6,17 @@
 class PointLight : public Light {
     public:
         PointLight() :
-            Light(), point(vec3(0,0,0)) {}
+            Light(), point(glm::vec3(0,0,0)) {}
 
-        vec3 point;
+        glm::vec3 point;
 
-        virtual bool AtPoint(const vec3 &p, vec3 &c, vec3 &d);
+        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d);
 };
 
-bool PointLight::AtPoint(const vec3 &p, vec3 &c, vec3 &d) {
+bool PointLight::AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d) {
     float distance = (point - p).length();
     c = color / (distance*distance) + ia;
-    d = unit_vector(point - p);
+    d = glm::normalize(point - p);
     return true;
 }
 

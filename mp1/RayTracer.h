@@ -7,9 +7,9 @@
 #include <random>
 #include <string>
 #include <thread>
-#include "lodepng/lodepng.h"
+#include <png++/png.hpp>
 #include "Image.h"
-#include "vec3.h"
+#include "glm/glm/glm.hpp"
 #include "Ray.h"
 #include "HittableList.h"
 #include "LightList.h"
@@ -44,14 +44,19 @@ class RayTracer {
 
         bool multithread;
 
+        bool sRGB;
+
     private:
         void _copy(const RayTracer &other);
         void _clear();
 
         void renderSection(int start_row, int end_row);
 
-        vec3 color(const Ray &r);
-        vec3 randomInUnitSphere();
+        void linearToSRGB();
+        float sRGB_max;
+
+        glm::vec3 color(const Ray &r);
+        glm::vec3 randomInUnitSphere();
 
         HittableList hittables;
         LightList lights;

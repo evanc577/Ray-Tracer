@@ -2,17 +2,18 @@
 #define LIGHT_H
 
 #include <vector>
-#include "vec3.h"
+#include "glm/glm/glm.hpp"
 
 class Light {
     public:
-        Light() : color(vec3(1,1,1)), ia(vec3(0,0,0)) {}
+        Light() : color(glm::vec3(1,1,1)), ia(glm::vec3(0,0,0)) {}
 
-        vec3 color;
+        glm::vec3 color;
 
-        vec3 ia;
+        glm::vec3 ia;
 
-        virtual bool AtPoint(const vec3 &p, vec3 &c, vec3 &d) = 0;
+        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &c,
+                glm::vec3 &d) = 0;
 };
 
 #endif

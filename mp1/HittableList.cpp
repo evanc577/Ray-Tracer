@@ -24,26 +24,27 @@ bool HittableList::hit(const Ray &r, float t_min, float t_max,
     return hit;
 }
 
-vec3 HittableList::color(hit_record &rec, Light &l, const vec3 &v) {
+glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &v) {
     (void)v;
-    vec3 color;
-    vec3 direction;
+    glm::vec3 color;
+    glm::vec3 direction;
     l.AtPoint(rec.p, color, direction);
 
-    vec3 ambient = rec.ka*l.ia;
+    glm::vec3 ambient = rec.ka*l.ia;
 
-    vec3 diffuse = color*rec.kd*(dot(direction,rec.normal));
-    if (isnan(diffuse.x()) || isnan(diffuse.y()) || isnan(diffuse.z())) {
-        diffuse = vec3(0,0,0);
+    glm::vec3 diffuse = color*rec.kd*(dot(direction,rec.normal));
+    if (glm::isnan(diffuse[0]) || glm::isnan(diffuse[1]) ||
+                glm::isnan(diffuse[2])) {
+        diffuse = glm::vec3(0,0,0);
     }
-    if (diffuse.x() < 0 || diffuse.y() < 0 || diffuse.z() < 0) {
-        diffuse = vec3(0,0,0);
-    }
+    if (diffuse[0] < 0) diffuse[0] = 0;
+    if (diffuse[1] < 0) diffuse[1] = 0;
+    if (diffuse[2] < 0) diffuse[2] = 0;
 
-    vec3 temp = ambient + diffuse;
-    max_val = fmax(max_val, temp.x());
-    max_val = fmax(max_val, temp.y());
-    max_val = fmax(max_val, temp.z());
+    glm::vec3 temp = ambient + diffuse;
+    max_val = fmax(max_val, temp[0]);
+    max_val = fmax(max_val, temp[1]);
+    max_val = fmax(max_val, temp[2]);
 
     return temp;
 }

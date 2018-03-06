@@ -7,7 +7,7 @@ class AmbientLight : public Light {
     public:
         AmbientLight();
 
-        virtual bool AtPoint(const vec3 &p, vec3 &c, vec3 &d);
+        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d);
 };
 
 #endif

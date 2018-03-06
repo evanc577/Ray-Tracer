@@ -6,6 +6,8 @@ RayTracer::RayTracer() : image_(NULL) {
     aa_factor_ = 1;
     multithread = false;
     ortho = true;
+    sRGB = false;
+    sRGB_max = 1;
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
@@ -17,6 +19,8 @@ RayTracer::RayTracer(unsigned w, unsigned h) :image_(NULL) {
     aa_factor_ = 1;
     multithread = false;
     ortho = true;
+    sRGB = false;
+    sRGB_max = 1;
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
@@ -49,28 +53,15 @@ void RayTracer::outputImage(std::string filename) const {
     std::chrono::high_resolution_clock::time_point t1 =
         std::chrono::high_resolution_clock::now();
 
-    std::vector<unsigned char> temp;
-    temp.resize(image_->width_ * image_->height_ * 4);
-    for (int i = 0; i < image_->width_; i++) {
-        for (int j = 0; j < image_->height_; j++) {
-            vec3 &p = image_->getPixel(i,j);
-            temp[4*(image_->height_-j-1)*image_->width_ + 4*i + 0] =
-                (unsigned char)(255*p.r());
-            temp[4*(image_->height_-j-1)*image_->width_ + 4*i + 1] =
-                (unsigned char)(255*p.g());
-            temp[4*(image_->height_-j-1)*image_->width_ + 4*i + 2] =
-                (unsigned char)(255*p.b());
-            temp[4*(image_->height_-j-1)*image_->width_ + 4*i + 3] =
-                (unsigned char)(255);
+    png::image<png::rgb_pixel> output_image(image_->width_, image_->height_);
+    for (png::uint_32 y = 0; y < output_image.get_height(); ++y) {
+        for (png::uint_32 x = 0; x < output_image.get_width(); ++x) {
+            glm::vec3 &pix = image_->getPixel(x,y);
+            output_image[image_->height_-y-1][x] =
+                png::rgb_pixel(255*pix[0], 255*pix[1], 255*pix[2]);
         }
     }
-
-    unsigned error = lodepng::encode(filename, temp, image_->width_,
-            image_->height_);
-    if (error) {
-        std::cout << "encoder error " << error << ": "<<
-            lodepng_error_text(error) << std::endl;
-    }
+    output_image.write(filename);
 
     // time end
     std::chrono::high_resolution_clock::time_point t2 =
@@ -89,12 +80,12 @@ void RayTracer::renderSection(int start_row, int end_row) {
     float left = -1;
     float lower = -1*float(image_->height_)/float(image_->width_);
 
-    vec3 corner(left, lower, 0.0);
-    vec3 corner_persp(left, lower, -1.0);
-    vec3 horz(2.0, 0.0, 0.0);
-    vec3 vert(0.0, -2.0*lower, 0.0);
-    vec3 origin(0.0, 0.0, 0.0);
-    vec3 orthoDirection = corner_persp - corner;
+    glm::vec3 corner(left, lower, 0.0);
+    glm::vec3 corner_persp(left, lower, -1.0);
+    glm::vec3 horz(2.0, 0.0, 0.0);
+    glm::vec3 vert(0.0, -2.0*lower, 0.0);
+    glm::vec3 origin(0.0, 0.0, 0.0);
+    glm::vec3 orthoDirection = corner_persp - corner;
 
     if (aa_factor_ < 1) {
         std::cout << "invalid antialias factor,"
@@ -120,14 +111,14 @@ void RayTracer::renderSection(int start_row, int end_row) {
                     r.setOrigin(origin);
                     r.setDirection(corner_persp + temp_u*horz + temp_v*vert);
                 }
-                vec3 col = color(r);
-                vec3 &pix = image_->getPixel(i,j);
+                glm::vec3 col = color(r);
+                glm::vec3 &pix = image_->getPixel(i,j);
                 pix = col;
             }
 
             // if antialiasing is enabled
             else {
-                vec3 col(0,0,0);
+                glm::vec3 col(0,0,0);
                 for (int k = 0; k < aa_factor_; k++) {
                     float range_begin = float(k)/float(aa_factor_);
                     float range_end = float(k+1)/float(aa_factor_);
@@ -149,8 +140,8 @@ void RayTracer::renderSection(int start_row, int end_row) {
                     col += color(r);
                 }
                 float aa_float_ = float(aa_factor_);
-                col /= vec3(aa_float_, aa_float_, aa_float_);
-                vec3 &pix = image_->getPixel(i,j);
+                col /= glm::vec3(aa_float_, aa_float_, aa_float_);
+                glm::vec3 &pix = image_->getPixel(i,j);
                 pix = col;
             }
         }
@@ -190,15 +181,42 @@ void RayTracer::render() {
         }
     }
 
+    // if multithread is disabled
     else {
         renderSection(0, image_->height_-1);
     }
 
-    if (hittables.max_val > 1) {
+    // transform to sRGB
+    if (sRGB) linearToSRGB();
+
+    // scale values to avoid exceeding 1
+    if (sRGB){
+        if (sRGB_max > 1) {
+            for (int i = 0; i < image_->width_; i++) {
+                for (int j = 0; j < image_->height_; j++) {
+                    glm::vec3 & p = image_->getPixel(i,j);
+                    p /= sRGB_max;
+                }
+            }
+        }
+    }
+    else {
+        float max_val = 0;
         for (int i = 0; i < image_->width_; i++) {
             for (int j = 0; j < image_->height_; j++) {
-                vec3 & p = image_->getPixel(i,j);
-                p /= hittables.max_val;
+                glm::vec3 & p = image_->getPixel(i,j);
+                if (p[0] > max_val) max_val = p[0];
+                if (p[1] > max_val) max_val = p[1];
+                if (p[2] > max_val) max_val = p[2];
+            }
+        }
+        
+        if (max_val > 1) {
+            for (int i = 0; i < image_->width_; i++) {
+                for (int j = 0; j < image_->height_; j++) {
+                    glm::vec3 & p = image_->getPixel(i,j);
+                    p /= max_val;
+                }
             }
         }
     }
@@ -211,13 +229,30 @@ void RayTracer::render() {
     std::cout << "done, took " << duration << "ms\n";
 }
 
-vec3 RayTracer::color(const Ray &r) {
+glm::vec3 RayTracer::color(const Ray &r) {
     hit_record rec;
     if (hittables.hit(r,0.0,std::numeric_limits<float>::max(),rec, lights)) {
         return hittables.color(rec, lights, r.direction());
     }
     else {
-        return vec3(0,0,0);
+        return glm::vec3(0,0,0);
+    }
+}
+
+void RayTracer::linearToSRGB() {
+    float c = 0.0031308;
+    float a = 0.055;
+
+    for (int j = 0; j < image_->height_; j++) {
+        for (int i = 0; i < image_->width_; i++) {
+            glm::vec3 &pix = image_->getPixel(i,j);
+            for (int k = 0; k < 3; k++) {
+                if (pix[k] <= c) pix[k] *= 12.92;
+                else pix[k] = (1+a)*pow(pix[k], 1/2.4) - a;
+
+                if (pix[k] > sRGB_max) sRGB_max = pix[k];
+            }
+        }
     }
 }
 

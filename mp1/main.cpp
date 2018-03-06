@@ -1,3 +1,4 @@
+#include <getopt.h>
 #include <iostream>
 #include <string>
 #include "RayTracer.h"
@@ -27,129 +28,104 @@ void printHelp(int argc, char *argv[]) {
         " (default: 1000px)\n";
     std::cout << "-m, --multithread    enable multithreading"
         " (default disabled)\n";
+    std::cout << "-s, --sRGB           transform to sRGB color space"
+        " (default disabled)\n";
     std::cout << "\nExamples:\n";
     std::cout << argv[0] << " -d\n";
     std::cout << argv[0] << " -w 200 -h 200\n";
     std::cout << argv[0] << " -w 3840 -h 2160 -a 16 -p persp "
-        "-m -o persp.png\n";
+        "-o persp.png -ms\n";
 }
 
 int main(int argc, char *argv[]) {
+    bool use_default = false;
     std::string filename = "output.png";
+    std::string s;
     bool ortho = true;
-    int i = 1;
     int width = 1000;
     int height = 1000;
     bool antialias = false;
     int aa_factor = 1;
     bool multithread = false;
+    bool sRGB = false;
 
     // parse options
     if (argc == 1) {
-        printHelp(argc, argv);
+        printHelp(argc,argv);
         return 0;
     }
-    while (i < argc) {
-        std::string arg = argv[i];
-
-        // help flag
-        if (arg == "--help") {
-            printHelp(argc, argv);
-            return 0;
-        }
-
-        // default flag
-        if (arg == "-d" || arg == "--default") {
-            break;
-        }
-
-        // projection flag
-        else if (arg == "-p" || arg == "--projection") {
-            i++;
-            if (i == argc) {
-                std::cout << argv[0] << ": no projection specified\n";
-                return 1;
-            }
-            else {
-                arg = argv[i];
-                if (arg == "ortho" || arg == "orthographic") {
+    while (true) {
+        if (use_default) break;
+        static struct option long_options[] =
+        {
+            {"help",        no_argument,       0, 0},
+            {"default",     no_argument,       0, 'd'},
+            {"projection",  required_argument, 0, 'p'},
+            {"antialias",   required_argument, 0, 'a'},
+            {"output",      required_argument, 0, 'o'},
+            {"width",       required_argument, 0, 'w'},
+            {"height",      required_argument, 0, 'h'},
+            {"multithread", no_argument,       0, 'm'},
+            {"sRGB",        no_argument,       0, 's'},
+            {0, 0, 0, 0}
+        };
+        int option_index = 0;
+        int c = getopt_long(argc, argv, "dp:a:o:w:h:ms",
+                long_options, &option_index);
+        if (c == -1) break;
+        switch (c) {
+            case 0:
+                printHelp(argc, argv);
+                return 0;
+            case 'd':
+                use_default = true;
+                break;
+            case 'p':
+                s = std::string(optarg);
+                if (s == "ortho" || s == "orthographic") {
                     ortho = true;
+                    break;
                 }
-                else if (arg == "persp" || arg == "perspective") {
+                else if (s == "persp" || s == "perspective") {
                     ortho = false;
+                    break;
                 }
-                else {
-                    std::cout << argv[0] << ": invalid projection\n";
+                std::cout << argv[0] << ": invalid projection\n";
+                return 1;
+            case 'a':
+                antialias = true;
+                aa_factor = std::stoi(optarg);
+                if (aa_factor < 1) {
+                    std::cout << argv[0] << ": invalid AA factor\n";
                     return 1;
                 }
-            }
-        }
-
-        // output filename flag
-        else if (arg == "-o") {
-            i++;
-            if (i == argc) {
-                std::cout << argv[0] << ": no output file specified\n";
+                break;
+            case 'o':
+                filename = std::string(optarg);
+                break;
+            case 'w':
+                width = std::stoi(optarg);
+                if (width > 0) break;
+                std::cout << argv[0] << ": invalid width\n";
                 return 1;
-            }
-            else {
-                arg = argv[i];
-                filename = arg;
-            }
-        }
-
-        // output width flag
-        else if (arg == "-w" || arg == "--width") {
-            i++;
-            if (i == argc) {
-                std::cout << argv[0] << ": no width specified\n";
+            case 'h':
+                height = std::stoi(optarg);
+                if (height > 0) break;
+                std::cout << argv[0] << ": invalid height\n";
                 return 1;
-            }
-            else {
-                arg = argv[i];
-                width = stoi(arg);
-            }
-        }
-
-        // output height flag
-        else if (arg == "-h" || arg == "--height") {
-            i++;
-            if (i == argc) {
-                std::cout << argv[0] << ": no height specified\n";
+            case 'm':
+                multithread = true;
+                break;
+            case 's':
+                sRGB = true;
+                break;
+            case '?':
                 return 1;
-            }
-            else {
-                arg = argv[i];
-                height = stoi(arg);
-            }
-        }
+            default:
+                printHelp(argc, argv);
+                return 0;
 
-        // antialias flag
-        else if (arg == "-a" || arg == "--antialias") {
-            i++;
-            if (i == argc) {
-                std::cout << argv[0] << ": no antialias factor specified\n";
-                return 1;
-            }
-            else {
-                arg = argv[i];
-                aa_factor = stoi(arg);
-                antialias = true;
-            }
         }
-
-        // multithread flag
-        else if (arg == "-m" || arg == "--multithread") {
-            multithread = true;
-        }
-
-        // invalid flags
-        else {
-            std::cout << argv[0] << ": invalid option " << arg << "\n";
-            return 1;
-        }
-
-        i++;
     }
 
     RayTracer r(width,height);
@@ -159,43 +135,44 @@ int main(int argc, char *argv[]) {
     r.aa_factor_ = aa_factor;
     r.ortho = ortho;
     r.multithread = multithread;
+    r.sRGB = sRGB;
 
 
     // Lights
     AmbientLight l1;
-    l1.ia = vec3(0.2,0.2,0.2);
+    l1.ia = glm::vec3(0.1,0.1,0.1);
     r.addLight(&l1);
 
     DirectionalLight l2;
-    l2.direction = unit_vector(vec3(1,-0.4,-1));
-    l2.color = vec3(0.6,0.6,0.6);
+    l2.direction = glm::normalize(glm::vec3(1,-0.4,-1));
+    l2.color = glm::vec3(1,1,1);
     r.addLight(&l2);
 
-    DirectionalLight l3;
-    l3.direction = unit_vector(vec3(-1,-0.4,-1));
-    l3.color = vec3(0.3,0.3,0.3);
-    r.addLight(&l3);
+    // DirectionalLight l3;
+    // l3.direction = glm::normalize(glm::vec3(-1,-0.4,-1));
+    // l3.color = glm::vec3(0.3,0.3,0.3);
+    // r.addLight(&l3);
 
-    DirectionalLight l4;
-    l4.direction = unit_vector(vec3(0,-1,0));
-    l3.color = vec3(0.9,0.9,0.9);
-    r.addLight(&l4);
+    // DirectionalLight l4;
+    // l4.direction = glm::normalize(glm::vec3(0,-1,0));
+    // l3.color = glm::vec3(0.9,0.9,0.9);
+    // r.addLight(&l4);
 
 
     // Spheres
-    Sphere s1(vec3(0,0,-1), 0.2);
-    s1.ka = vec3(1,0.2,0.3);
-    s1.kd = vec3(1,0.2,0.3);
+    Sphere s1(glm::vec3(0,0,-1), 0.2);
+    s1.ka = glm::vec3(1,0.2,0.3);
+    s1.kd = glm::vec3(1,0.2,0.3);
     r.addHittable(&s1);
 
-    Sphere s2(vec3(0.7,0,-2), 0.2);
-    s2.ka = vec3(0,0.8,0);
-    s2.kd = vec3(0,0.8,0);
+    Sphere s2(glm::vec3(0.7,0,-2), 0.2);
+    s2.ka = glm::vec3(0,0.8,0);
+    s2.kd = glm::vec3(0,0.8,0);
     r.addHittable(&s2);
 
-    Sphere s3(vec3(-0.5,-0.1,-1), 0.2);
-    s3.ka = vec3(0.2,0.1,0.8);
-    s3.kd = vec3(0.2,0.1,0.8);
+    Sphere s3(glm::vec3(-0.5,-0.1,-1), 0.2);
+    s3.ka = glm::vec3(0.2,0.1,0.8);
+    s3.kd = glm::vec3(0.2,0.1,0.8);
     r.addHittable(&s3);
 
     // Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
@@ -204,9 +181,9 @@ int main(int argc, char *argv[]) {
     // r.addHittable(&s4);
 
     // Planes
-    CheckerPlane p1(vec3(0,-1,0), unit_vector(vec3(0,1,0.5)));
-    p1.ka1 = vec3(0.9,0.9,0.9);
-    p1.ka2 = vec3(0.1,0.1,0.1);
+    CheckerPlane p1(glm::vec3(0,-1,0), glm::normalize(glm::vec3(0,1,0.5)));
+    p1.ka1 = glm::vec3(0.9,0.9,0.9);
+    p1.ka2 = glm::vec3(0.1,0.1,0.1);
     p1.kd1 = p1.ka1;
     p1.kd2 = p1.ka2;
     p1.tile_size = 0.2;
