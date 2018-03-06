@@ -33,8 +33,8 @@ void printHelp(int argc, char *argv[]) {
     std::cout << "\nExamples:\n";
     std::cout << argv[0] << " -d\n";
     std::cout << argv[0] << " -w 200 -h 200\n";
-    std::cout << argv[0] << " -w 3840 -h 2160 -a 16 -p persp "
-        "-o persp.png -ms\n";
+    std::cout << argv[0] << " -w 3840 -h 2160 -p persp "
+        "-o persp.png -ma 16\n";
 }
 
 int main(int argc, char *argv[]) {
