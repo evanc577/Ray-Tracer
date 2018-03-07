@@ -2,7 +2,8 @@ CXX = clang++
 CXXFLAGS = -O3 -g -std=c++1y -Wall -Wextra -Wpedantic
 EXE= mp1
 OBJS = main.o RayTracer.o Image.o LightList.o AmbientLight.o \
-	   DirectionalLight.o HittableList.o Sphere.o Plane.o CheckerPlane.o
+	   DirectionalLight.o HittableList.o Sphere.o Plane.o CheckerPlane.o \
+	   Triangle.o
 LD = clang++
 LDFLAGS = -std=c++1y -lpthread -lpng
 
@@ -12,7 +13,7 @@ $(EXE) : $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o $(EXE)
 
 main.o : main.cpp RayTracer.o Image.o Sphere.o Plane.o CheckerPlane.o \
-	LightList.o AmbientLight.o DirectionalLight.o
+	Triangle.o LightList.o AmbientLight.o DirectionalLight.o
 	$(CXX) -c $(CXXFLAGS) main.cpp
 
 RayTracer.o : RayTracer.cpp RayTracer.h Image.o glm/glm/glm.hpp \
@@ -42,6 +43,9 @@ Plane.o : Plane.h Plane.cpp Hittable.h
 
 CheckerPlane.o : CheckerPlane.h CheckerPlane.cpp Plane.o
 	$(CXX) -c $(CXXFLAGS) CheckerPlane.cpp
+
+Triangle.o : Triangle.h Triangle.cpp Hittable.h
+	$(CXX) -c $(CXXFLAGS) Triangle.cpp
 
 clean :
 	rm -rf *.o $(EXE)

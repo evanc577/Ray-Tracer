@@ -5,6 +5,7 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "CheckerPlane.h"
+#include "Triangle.h"
 #include "AmbientLight.h"
 #include "DirectionalLight.h"
 
@@ -144,8 +145,8 @@ int main(int argc, char *argv[]) {
     r.addLight(&l1);
 
     DirectionalLight l2;
-    l2.direction = glm::normalize(glm::vec3(1,-0.4,-1));
-    l2.color = glm::vec3(1,1,1);
+    l2.direction = glm::normalize(glm::vec3(1,-0.4,-0.5));
+    l2.color = glm::vec3(0.9,0.9,0.9);
     r.addLight(&l2);
 
     // DirectionalLight l3;
@@ -165,12 +166,12 @@ int main(int argc, char *argv[]) {
     s1.kd = glm::vec3(1,0.2,0.3);
     r.addHittable(&s1);
 
-    Sphere s2(glm::vec3(0.7,0,-2), 0.2);
+    Sphere s2(glm::vec3(0.5,0,-2), 0.2);
     s2.ka = glm::vec3(0,0.8,0);
     s2.kd = glm::vec3(0,0.8,0);
     r.addHittable(&s2);
 
-    Sphere s3(glm::vec3(-0.5,-0.1,-1), 0.2);
+    Sphere s3(glm::vec3(-0.4,-0.1,-1.1), 0.2);
     s3.ka = glm::vec3(0.2,0.1,0.8);
     s3.kd = glm::vec3(0.2,0.1,0.8);
     r.addHittable(&s3);
@@ -181,7 +182,7 @@ int main(int argc, char *argv[]) {
     // r.addHittable(&s4);
 
     // Planes
-    CheckerPlane p1(glm::vec3(0,-1,0), glm::normalize(glm::vec3(0,1,0.5)));
+    CheckerPlane p1(glm::vec3(0,-1,-5), glm::normalize(glm::vec3(0,1,0)));
     p1.ka1 = glm::vec3(0.9,0.9,0.9);
     p1.ka2 = glm::vec3(0.1,0.1,0.1);
     p1.kd1 = p1.ka1;
@@ -189,6 +190,12 @@ int main(int argc, char *argv[]) {
     p1.tile_size = 0.2;
     r.addHittable(&p1);
 
+    // Triangles
+    Triangle t1(glm::vec3(-0.25,-0.25,-1), glm::vec3(0.25,-0.25,-0.8),
+            glm::vec3(0,0.25,-1));
+    t1.ka = glm::vec3(1,1,0);
+    t1.kd = glm::vec3(1,1,0);
+    r.addHittable(&t1);
 
     // render and write image to file
     r.render();
