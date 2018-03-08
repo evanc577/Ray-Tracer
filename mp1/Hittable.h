@@ -16,7 +16,7 @@ struct hit_record {
 
     glm::vec3 ks;
     glm::vec3 r;
-    glm::vec3 alpha;
+    float alpha;
 };
 
 class Hittable {
@@ -28,7 +28,7 @@ class Hittable {
 
         glm::vec3 ka = glm::vec3(1,1,1);
         glm::vec3 kd = glm::vec3(1,1,1);
-        glm::vec3 ks;
-        glm::vec3 alpha;
+        glm::vec3 ks = glm::vec3(1,1,1);
+        float alpha = 5;
 };
 #endif

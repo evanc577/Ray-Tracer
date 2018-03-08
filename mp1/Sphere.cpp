@@ -21,6 +21,8 @@ bool Sphere::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
             // rec.ka = vec3(0,0,1);
             rec.ka = ka;
             rec.kd = kd;
+            rec.ks = ks;
+            rec.alpha = alpha;
             return true;
         }
         temp = (-b + sqrt(discriminant))/(a);
@@ -30,6 +32,8 @@ bool Sphere::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
             rec.normal = (rec.p - center) / radius;
             rec.ka = ka;
             rec.kd = kd;
+            rec.ks = ks;
+            rec.alpha = alpha;
             // rec.ka = 0.5*vec3(rec.normal.x()+1, rec.normal.y()+1,
                     // rec.normal.z()+1);
             // rec.kd = vec3(1,1,1);

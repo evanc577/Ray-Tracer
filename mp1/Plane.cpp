@@ -16,6 +16,8 @@ bool Plane::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
             rec.normal = normal;
             rec.ka = ka;
             rec.kd = kd;
+            rec.ks = ks;
+            rec.alpha = alpha;
             return true;
         }
     }

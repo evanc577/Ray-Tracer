@@ -146,7 +146,8 @@ int main(int argc, char *argv[]) {
 
     DirectionalLight l2;
     l2.direction = glm::normalize(glm::vec3(1,-0.4,-0.5));
-    l2.color = glm::vec3(0.9,0.9,0.9);
+    l2.id = glm::vec3(0.9,0.9,0.9);
+    l2.is = glm::vec3(0.5,0.5,0.5);
     r.addLight(&l2);
 
     // DirectionalLight l3;

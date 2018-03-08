@@ -18,6 +18,10 @@ class CheckerPlane : public Plane {
         glm::vec3 ka2;
         glm::vec3 kd1;
         glm::vec3 kd2;
+        glm::vec3 ks1;
+        glm::vec3 ks2;
+        float alpha1;
+        float alpha2;
         float tile_size;
 };
 

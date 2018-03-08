@@ -6,14 +6,14 @@
 
 class Light {
     public:
-        Light() : color(glm::vec3(1,1,1)), ia(glm::vec3(0,0,0)) {}
+        Light() {}
 
-        glm::vec3 color;
+        glm::vec3 ia = glm::vec3(1,1,1);
+        glm::vec3 id = glm::vec3(1,1,1);
+        glm::vec3 is = glm::vec3(1,1,1);
 
-        glm::vec3 ia;
-
-        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &c,
-                glm::vec3 &d) = 0;
+        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &ca,
+                glm::vec3 &cd, glm::vec3 &cs, glm::vec3 &d) = 0;
 };
 
 #endif

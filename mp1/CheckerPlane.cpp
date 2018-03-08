@@ -5,12 +5,20 @@ CheckerPlane::CheckerPlane() : Plane() {
     ka2 = glm::vec3(0,0,0);
     kd1 = ka1;
     kd2 = ka2;
+    ks1 = ka1;
+    ks2 = ka2;
+    alpha1 = 5;
+    alpha2 = alpha1;
 }
 CheckerPlane::CheckerPlane(glm::vec3 p, glm::vec3 n) : Plane(p,n) {
     ka1 = glm::vec3(1,1,1);
     ka2 = glm::vec3(0,0,0);
     kd1 = ka1;
     kd2 = ka2;
+    ks1 = ka1;
+    ks2 = ka2;
+    alpha1 = 5;
+    alpha2 = alpha1;
 }
 
 glm::vec3 CheckerPlane::orthogonal(glm::vec3 n) const {
@@ -36,10 +44,14 @@ bool CheckerPlane::hit(const Ray &r, float t_min, float t_max,
     if ((ratio1+ratio2)%2 == 0) {
         rec.ka = ka1;
         rec.kd = kd1;
+        rec.ks = ks1;
+        rec.alpha = alpha1;
     }
     else {
         rec.ka = ka2;
         rec.kd = kd2;
+        rec.ks = ks2;
+        rec.alpha = alpha2;
     }
 
     return ret;
