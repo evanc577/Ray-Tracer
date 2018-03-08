@@ -165,6 +165,7 @@ int main(int argc, char *argv[]) {
     Sphere s1(glm::vec3(0,0,-1), 0.2);
     s1.ka = glm::vec3(1,0.2,0.3);
     s1.kd = glm::vec3(1,0.2,0.3);
+    s1.alpha = 10;
     r.addHittable(&s1);
 
     Sphere s2(glm::vec3(0.5,0,-2), 0.2);

@@ -42,18 +42,23 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &v) {
                 glm::isnan(diffuse[2])) {
         diffuse = glm::vec3(0,0,0);
     }
-    if (diffuse[0] < 0) diffuse[0] = 0;
-    if (diffuse[1] < 0) diffuse[1] = 0;
-    if (diffuse[2] < 0) diffuse[2] = 0;
+    bool do_specular = true;
+    if (diffuse[0] <= 0) diffuse[0] = 0;
+    if (diffuse[1] <= 0) diffuse[1] = 0;
+    if (diffuse[2] <= 0) diffuse[2] = 0;
+    if (diffuse[0] <= 0 && diffuse[1] <= 0 && diffuse[2] <= 0) do_specular = false;
 
-    glm::vec3 specular = rec.ks*float((pow(-1.0f*dot(r,temp_v),rec.alpha)))*cs;
-    if (glm::isnan(specular[0]) || glm::isnan(specular[1]) ||
+    glm::vec3 specular(0,0,0);
+    if (do_specular) {
+        specular = rec.ks*float((pow(-1.0f*dot(r,temp_v),rec.alpha)))*cs;
+        if (glm::isnan(specular[0]) || glm::isnan(specular[1]) ||
                 glm::isnan(specular[2])) {
-        diffuse = glm::vec3(0,0,0);
+            diffuse = glm::vec3(0,0,0);
+        }
+        if (specular[0] < 0) specular[0] = 0;
+        if (specular[1] < 0) specular[1] = 0;
+        if (specular[2] < 0) specular[2] = 0;
     }
-    if (specular[0] < 0) specular[0] = 0;
-    if (specular[1] < 0) specular[1] = 0;
-    if (specular[2] < 0) specular[2] = 0;
 
     glm::vec3 temp = ambient + diffuse + specular;
     max_val = fmax(max_val, temp[0]);
