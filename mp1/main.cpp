@@ -163,19 +163,22 @@ int main(int argc, char *argv[]) {
 
     // Spheres
     Sphere s1(glm::vec3(0,0,-1), 0.2);
-    s1.ka = glm::vec3(1,0.2,0.3);
-    s1.kd = glm::vec3(1,0.2,0.3);
+    s1.ka = glm::vec3(0.6,0.1,0.1);
+    s1.kd = glm::vec3(0.6,0.1,0.1);
+    s1.ks = glm::vec3(1,1,1);
     s1.alpha = 10;
     r.addHittable(&s1);
 
     Sphere s2(glm::vec3(0.5,0,-2), 0.2);
-    s2.ka = glm::vec3(0,0.8,0);
-    s2.kd = glm::vec3(0,0.8,0);
+    s2.ka = glm::vec3(0,0.6,0);
+    s2.kd = glm::vec3(0,0.6,0);
+    s2.ks = glm::vec3(1,1,1);
     r.addHittable(&s2);
 
     Sphere s3(glm::vec3(-0.4,-0.1,-1.1), 0.2);
-    s3.ka = glm::vec3(0.2,0.1,0.8);
-    s3.kd = glm::vec3(0.2,0.1,0.8);
+    s3.ka = glm::vec3(0.2,0.1,0.6);
+    s3.kd = glm::vec3(0.2,0.1,0.6);
+    s3.ks = glm::vec3(1,1,1);
     r.addHittable(&s3);
 
     // Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
@@ -185,7 +188,7 @@ int main(int argc, char *argv[]) {
 
     // Planes
     CheckerPlane p1(glm::vec3(0,-1,-5), glm::normalize(glm::vec3(0,1,0)));
-    p1.ka1 = glm::vec3(0.9,0.9,0.9);
+    p1.ka1 = glm::vec3(0.6,0.6,0.6);
     p1.ka2 = glm::vec3(0.1,0.1,0.1);
     p1.kd1 = p1.ka1;
     p1.kd2 = p1.ka2;
@@ -195,8 +198,8 @@ int main(int argc, char *argv[]) {
     // Triangles
     Triangle t1(glm::vec3(-0.25,-0.25,-1), glm::vec3(0.25,-0.25,-0.8),
             glm::vec3(0,0.25,-1));
-    t1.ka = glm::vec3(1,1,0);
-    t1.kd = glm::vec3(1,1,0);
+    t1.ka = glm::vec3(0.6,0.6,0);
+    t1.kd = glm::vec3(0.6,0.6,0);
     r.addHittable(&t1);
 
     // render and write image to file

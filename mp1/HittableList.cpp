@@ -24,20 +24,19 @@ bool HittableList::hit(const Ray &r, float t_min, float t_max,
     return hit;
 }
 
-glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &v) {
-    (void)v;
+glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
     glm::vec3 ca;
     glm::vec3 cd;
     glm::vec3 cs;
-    glm::vec3 direction;
-    l.AtPoint(rec.p, ca, cd, cs, direction);
+    glm::vec3 light_d;
+    l.AtPoint(rec.p, ca, cd, cs, light_d);
 
-    glm::vec3 r = direction - 2*(dot(direction, rec.normal))*rec.normal;
-    glm::vec3 temp_v = -v;
+    glm::vec3 r = light_d - 2*(dot(light_d, rec.normal))*rec.normal;
+    glm::vec3 temp_d = -d;
 
     glm::vec3 ambient = rec.ka*ca;
 
-    glm::vec3 diffuse = cd*rec.kd*(dot(direction,rec.normal));
+    glm::vec3 diffuse = cd*rec.kd*(dot(light_d,rec.normal));
     if (glm::isnan(diffuse[0]) || glm::isnan(diffuse[1]) ||
                 glm::isnan(diffuse[2])) {
         diffuse = glm::vec3(0,0,0);
@@ -50,7 +49,7 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &v) {
 
     glm::vec3 specular(0,0,0);
     if (do_specular) {
-        specular = rec.ks*float((pow(-1.0f*dot(r,temp_v),rec.alpha)))*cs;
+        specular = rec.ks*float((pow(-1.0f*dot(r,temp_d),rec.alpha)))*cs;
         if (glm::isnan(specular[0]) || glm::isnan(specular[1]) ||
                 glm::isnan(specular[2])) {
             diffuse = glm::vec3(0,0,0);
