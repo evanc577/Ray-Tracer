@@ -44,8 +44,8 @@ Other Goodies:
 
 Perspective image:
 
-* ![Perspective Image](images/perspective.png)
+![Perspective Image](images/perspective.png)
 
 Orthographic image:
 
-* ![Orthographic Image](images/orthographic.png)
+![Orthographic Image](images/orthographic.png)
