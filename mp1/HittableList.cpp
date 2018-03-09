@@ -27,19 +27,27 @@ bool HittableList::hit(const Ray &r, float t_min, float t_max,
 
 glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
 
+    // calculate and return a list of ambient, directional, specular, and
+    // light directions at rec.p
     std::vector<glm::vec3> ca_list;
     std::vector<glm::vec3> cd_list;
     std::vector<glm::vec3> cs_list;
     std::vector<glm::vec3> light_d_list;
-
     l.AtPoint(rec.p, ca_list, cd_list, cs_list, light_d_list);
 
-    std::vector<glm::vec3> r_list;
-    std::vector<glm::vec3> a_list;
-    std::vector<glm::vec3> d_list;
-    std::vector<glm::vec3> s_list;
+    // Phong model values
+    std::vector<glm::vec3> r_list;  // R vector
+    std::vector<glm::vec3> a_list;  // ambient term
+    std::vector<glm::vec3> d_list;  // diffuse term
+    std::vector<glm::vec3> s_list;  // specular term
 
-    for (int i = 0; i < (int)ca_list.size(); i++) {
+    int size = ca_list.size();
+    r_list.reserve(size);
+    a_list.reserve(size);
+    d_list.reserve(size);
+    s_list.reserve(size);
+
+    for (int i = 0; i < size; i++) {
         // add R vectors to r_list
         r_list.push_back(light_d_list[i] -
                 2*(dot(light_d_list[i], rec.normal))*rec.normal);
@@ -48,9 +56,11 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
         a_list.push_back(ca_list[i]*rec.ka);
     }
 
-    // add diffuse term to d_list;
+    // determines if specular term should be added
     std::vector<bool> pos_diffuse_list;
-    for (int i = 0; i < (int)cd_list.size(); i++) {
+
+    // add diffuse term to d_list;
+    for (int i = 0; i < size; i++) {
         pos_diffuse_list.push_back(false);
         glm::vec3 temp_diffuse = cd_list[i]*rec.kd*
             dot(light_d_list[i], rec.normal);
@@ -73,7 +83,7 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
     }
 
     // add specular term to s_list
-    for (int i = 0; i < (int)cs_list.size(); i++) {
+    for (int i = 0; i < size; i++) {
         glm::vec3 temp_d = -d;
         if (pos_diffuse_list[i]) {
             glm::vec3 specular(0,0,0);
@@ -96,14 +106,13 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
     }
 
     glm::vec3 temp(0,0,0);
-    // std::cout << a_list.size()  << " " << d_list.size() << " " << s_list.size() << "\n";
-    for (int i = 0; i < (int)a_list.size(); i++) {
+    for (int i = 0; i < size; i++) {
         temp += a_list[i];
     }
-    for (int i = 0; i < (int)d_list.size(); i++) {
+    for (int i = 0; i < size; i++) {
         temp += d_list[i];
     }
-    for (int i = 0; i < (int)s_list.size(); i++) {
+    for (int i = 0; i < size; i++) {
         temp += s_list[i];
     }
     max_val = fmax(max_val, temp[0]);
