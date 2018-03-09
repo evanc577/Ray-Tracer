@@ -58,7 +58,7 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
 
   // add diffuse term to d_list;
   for (int i = 0; i < size; i++) {
-    pos_diffuse_list.push_back(false);
+    pos_diffuse_list.emplace_back(false);
     glm::vec3 temp_diffuse =
         cd_list[i] * rec.kd * dot(light_d_list[i], rec.normal);
 
@@ -67,7 +67,9 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
       temp_diffuse = glm::vec3(0, 0, 0);
       pos_diffuse_list[i] = false;
     }
+
     pos_diffuse_list[i] = true;
+
     if (temp_diffuse[0] < 0) temp_diffuse[0] = 0;
     if (temp_diffuse[1] < 0) temp_diffuse[1] = 0;
     if (temp_diffuse[2] < 0) temp_diffuse[2] = 0;
@@ -97,7 +99,7 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
 
       s_list.push_back(specular);
     } else {
-      s_list.push_back(glm::vec3(0, 0, 0));
+      s_list.emplace_back(0,0,0);
     }
   }
 
@@ -111,9 +113,9 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
   for (int i = 0; i < size; i++) {
     temp += s_list[i];
   }
-  max_val = fmax(max_val, temp[0]);
-  max_val = fmax(max_val, temp[1]);
-  max_val = fmax(max_val, temp[2]);
+  if (temp[0] > max_val) max_val = temp[0];
+  if (temp[1] > max_val) max_val = temp[1];
+  if (temp[2] > max_val) max_val = temp[2];
 
   return temp;
 }

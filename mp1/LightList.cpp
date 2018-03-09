@@ -5,13 +5,6 @@ LightList::LightList() : Light() {}
 
 LightList::LightList(std::vector<Light *> l) : Light() { list = l; }
 
-void LightList::updateValues() {
-  for (std::vector<Light *>::const_iterator it = list.begin(); it != list.end();
-       ++it) {
-    ia += (*it)->ia;
-  }
-}
-
 bool LightList::AtPoint(const glm::vec3 &p, std::vector<glm::vec3> &ca,
                         std::vector<glm::vec3> &cd, std::vector<glm::vec3> &cs,
                         std::vector<glm::vec3> &d) {

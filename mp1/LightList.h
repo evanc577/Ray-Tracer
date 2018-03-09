@@ -13,7 +13,6 @@ class LightList : public Light {
                        std::vector<glm::vec3> &cd, std::vector<glm::vec3> &cs,
                        std::vector<glm::vec3> &d);
 
-  void updateValues();
   std::vector<Light *> list;
 };
 

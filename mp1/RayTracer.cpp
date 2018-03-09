@@ -146,8 +146,6 @@ void RayTracer::render() {
     return;
   }
 
-  lights.updateValues();
-
   // time start
   std::chrono::high_resolution_clock::time_point t1 =
       std::chrono::high_resolution_clock::now();
@@ -175,19 +173,9 @@ void RayTracer::render() {
   }
 
   // scale values to avoid exceeding 1
-  float max_val = 0;
-  for (int i = 0; i < image_->width_; i++) {
-    for (int j = 0; j < image_->height_; j++) {
-      glm::vec3 &p = image_->getPixel(i, j);
-      if (p[0] > max_val) max_val = p[0];
-      if (p[1] > max_val) max_val = p[1];
-      if (p[2] > max_val) max_val = p[2];
-    }
-  }
-
   float gamma = 0.9f;
-  float A = pow(max_val, -gamma);
-  if (max_val > 1) {
+  float A = pow(hittables.max_val, -gamma);
+  if (hittables.max_val > 1) {
     for (int i = 0; i < image_->width_; i++) {
       for (int j = 0; j < image_->height_; j++) {
         glm::vec3 &p = image_->getPixel(i, j);
