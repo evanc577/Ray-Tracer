@@ -6,8 +6,6 @@ RayTracer::RayTracer() : image_(NULL) {
     aa_factor_ = 1;
     multithread = false;
     ortho = true;
-    sRGB = false;
-    sRGB_max = 1;
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
@@ -19,8 +17,6 @@ RayTracer::RayTracer(unsigned w, unsigned h) :image_(NULL) {
     aa_factor_ = 1;
     multithread = false;
     ortho = true;
-    sRGB = false;
-    sRGB_max = 1;
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator(seed);
@@ -185,42 +181,27 @@ void RayTracer::render() {
         renderSection(0, 1);
     }
 
-    // transform to sRGB
-    if (sRGB) linearToSRGB();
-
     // scale values to avoid exceeding 1
-    if (sRGB){
-        if (sRGB_max > 1) {
-            for (int i = 0; i < image_->width_; i++) {
-                for (int j = 0; j < image_->height_; j++) {
-                    glm::vec3 & p = image_->getPixel(i,j);
-                    p /= sRGB_max;
-                }
-            }
+    float max_val = 0;
+    for (int i = 0; i < image_->width_; i++) {
+        for (int j = 0; j < image_->height_; j++) {
+            glm::vec3 & p = image_->getPixel(i,j);
+            if (p[0] > max_val) max_val = p[0];
+            if (p[1] > max_val) max_val = p[1];
+            if (p[2] > max_val) max_val = p[2];
         }
     }
-    else {
-        float max_val = 0;
+
+    float gamma = 0.9f;
+    float A = pow(max_val, -gamma);
+    if (max_val > 1) {
         for (int i = 0; i < image_->width_; i++) {
             for (int j = 0; j < image_->height_; j++) {
                 glm::vec3 & p = image_->getPixel(i,j);
-                if (p[0] > max_val) max_val = p[0];
-                if (p[1] > max_val) max_val = p[1];
-                if (p[2] > max_val) max_val = p[2];
-            }
-        }
-
-        float gamma = 0.9f;
-        float A = pow(max_val, -gamma);
-        if (max_val > 1) {
-            for (int i = 0; i < image_->width_; i++) {
-                for (int j = 0; j < image_->height_; j++) {
-                    glm::vec3 & p = image_->getPixel(i,j);
-                    for (int k = 0; k < 3; k++) {
-                        p[k] = A*pow(p[k], gamma);
-                    }
-                    // p /= max_val;
+                for (int k = 0; k < 3; k++) {
+                    p[k] = A*pow(p[k], gamma);
                 }
+                // p /= max_val;
             }
         }
     }
@@ -240,23 +221,6 @@ glm::vec3 RayTracer::color(const Ray &r) {
     }
     else {
         return glm::vec3(0,0,0);
-    }
-}
-
-void RayTracer::linearToSRGB() {
-    float c = 0.0031308;
-    float a = 0.055;
-
-    for (int j = 0; j < image_->height_; j++) {
-        for (int i = 0; i < image_->width_; i++) {
-            glm::vec3 &pix = image_->getPixel(i,j);
-            for (int k = 0; k < 3; k++) {
-                if (pix[k] <= c) pix[k] *= 12.92;
-                else pix[k] = (1+a)*pow(pix[k], 1/2.4) - a;
-
-                if (pix[k] > sRGB_max) sRGB_max = pix[k];
-            }
-        }
     }
 }
 

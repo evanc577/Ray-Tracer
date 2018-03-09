@@ -29,8 +29,6 @@ void printHelp(int argc, char *argv[]) {
         " (default: 1000px)\n";
     std::cout << "-m, --multithread    enable multithreading"
         " (default disabled)\n";
-    std::cout << "-s, --sRGB           transform to sRGB color space"
-        " (experimental) (default disabled)\n";
     std::cout << "\nExamples:\n";
     std::cout << argv[0] << " -d\n";
     std::cout << argv[0] << " -w 200 -h 200\n";
@@ -48,7 +46,6 @@ int main(int argc, char *argv[]) {
     bool antialias = false;
     int aa_factor = 1;
     bool multithread = false;
-    bool sRGB = false;
 
     // parse options
     if (argc == 1) {
@@ -67,7 +64,6 @@ int main(int argc, char *argv[]) {
             {"width",       required_argument, 0, 'w'},
             {"height",      required_argument, 0, 'h'},
             {"multithread", no_argument,       0, 'm'},
-            {"sRGB",        no_argument,       0, 's'},
             {0, 0, 0, 0}
         };
         int option_index = 0;
@@ -117,9 +113,6 @@ int main(int argc, char *argv[]) {
             case 'm':
                 multithread = true;
                 break;
-            case 's':
-                sRGB = true;
-                break;
             case '?':
                 return 1;
             default:
@@ -136,7 +129,6 @@ int main(int argc, char *argv[]) {
     r.aa_factor_ = aa_factor;
     r.ortho = ortho;
     r.multithread = multithread;
-    r.sRGB = sRGB;
 
 
     // Lights
