@@ -1,2 +1,5 @@
 # object files
 *.o
+
+# zip files
+*.zip
