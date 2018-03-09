@@ -1,6 +1,7 @@
 CXX = clang++
 CXXFLAGS = -O3 -g -std=c++1y -Wall -Wextra -Wpedantic
 EXE= mp1
+EXEASAN = mp1-asan
 OBJS = main.o RayTracer.o Image.o LightList.o AmbientLight.o \
 	   DirectionalLight.o HittableList.o Sphere.o Plane.o CheckerPlane.o \
 	   Triangle.o

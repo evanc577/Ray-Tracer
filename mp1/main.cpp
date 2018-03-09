@@ -145,17 +145,16 @@ int main(int argc, char *argv[]) {
     r.addLight(&l1);
 
     DirectionalLight l2;
-    l2.direction = glm::normalize(glm::vec3(0.3,-1,0));
-    l2.ia = glm::vec3(0,0,0);
+    l2.direction = glm::normalize(glm::vec3(0.5,-1,0));
     l2.id = glm::vec3(0.9,0.9,0.9);
     l2.is = glm::vec3(0.9,0.9,0.9);
     r.addLight(&l2);
 
-    // DirectionalLight l3;
-    // l3.direction = glm::normalize(glm::vec3(-1,-0.4,-1));
-    // l3.id = glm::vec3(0.3,0.3,0.3);
-    // l3.is = glm::vec3(0.3,0.3,0.3);
-    // r.addLight(&l3);
+    DirectionalLight l3;
+    l3.direction = glm::normalize(glm::vec3(-0.5,-1,-0.5));
+    l3.id = glm::vec3(0.9,0.9,0.9);
+    l3.is = glm::vec3(0.9,0.9,0.9);
+    r.addLight(&l3);
 
     // DirectionalLight l4;
     // l4.direction = glm::normalize(glm::vec3(0,-1,0));
@@ -168,28 +167,30 @@ int main(int argc, char *argv[]) {
     Sphere s1(glm::vec3(0,0,-1.1), 0.2);
     s1.ka = glm::vec3(1,0.1,0.1);
     s1.kd = glm::vec3(1,0.1,0.1);
-    s1.ks = glm::vec3(0.5,0.5,0.5);
+    s1.ks = 0.5f*glm::vec3(1,1,1);
     s1.alpha = 10;
     r.addHittable(&s1);
 
     Sphere s2(glm::vec3(0.7,0,-2), 0.2);
     s2.ka = glm::vec3(0,1,0);
     s2.kd = glm::vec3(0,1,0);
-    s2.ks = glm::vec3(0.5,0.5,0.5);
+    s2.ks = 0.5f*glm::vec3(1,1,1);
     s2.alpha = 10;
     r.addHittable(&s2);
 
-    Sphere s3(glm::vec3(-0.4,-0.1,-1), 0.2);
-    s3.ka = glm::vec3(1,0.3,0.6);
-    s3.kd = glm::vec3(1,0.3,0.6);
-    s3.ks = glm::vec3(0.5,0.5,0.5);
+    Sphere s3(glm::vec3(-0.4,-0.1,-1), 0.15);
+    s3.ka = glm::vec3(1,0.1,1);
+    s3.kd = glm::vec3(1,0.1,1);
+    s3.ks = 0.5f*glm::vec3(1,1,1);
     s3.alpha = 10;
     r.addHittable(&s3);
 
-    // Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
-    // s4.ka = vec3(0.1,0.9,0.9);
-    // s4.kd = vec3(0.1,0.9,0.9);
-    // r.addHittable(&s4);
+    Sphere s4(glm::vec3(0.8,-0.4,-1.9), 0.3);
+    s4.ka = glm::vec3(0.1,0.9,0.9);
+    s4.kd = glm::vec3(0.1,0.9,0.9);
+    s4.ks = 0.05f*glm::vec3(1,1,1);
+    s4.alpha = 30;
+    r.addHittable(&s4);
 
     // Planes
     CheckerPlane p1(glm::vec3(0,-0.5,-2), glm::normalize(glm::vec3(0,1,0.4)));
@@ -198,7 +199,9 @@ int main(int argc, char *argv[]) {
     p1.kd1 = p1.ka1;
     p1.kd2 = p1.ka2;
     p1.ks1 = glm::vec3(0.1,0.1,0.1);
-    p1.ks2= glm::vec3(0.1,0.1,0.1);
+    p1.ks2 = p1.ks1;
+    p1.alpha1 = 3;
+    p1.alpha2 = 3;
     p1.tile_size = 0.2;
     r.addHittable(&p1);
 

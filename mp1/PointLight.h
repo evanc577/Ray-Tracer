@@ -10,14 +10,9 @@ class PointLight : public Light {
 
         glm::vec3 point;
 
-        virtual bool AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d);
+        virtual bool AtPoint(const glm::vec3 &p, std::vector<glm::vec3> &ca,
+                std::vector<glm::vec3> &cd, std::vector<glm::vec3> &cs,
+                std::vector<glm::vec3> &d);
 };
-
-bool PointLight::AtPoint(const glm::vec3 &p, glm::vec3 &c, glm::vec3 &d) {
-    float distance = (point - p).length();
-    c = color / (distance*distance) + ia;
-    d = glm::normalize(point - p);
-    return true;
-}
 
 #endif
