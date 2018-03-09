@@ -1,5 +1,4 @@
 #include "DirectionalLight.h"
-#include <iostream>
 
 DirectionalLight::DirectionalLight() : Light() {
   direction = glm::normalize(glm::vec3(0, 0, -1));

@@ -1,5 +1,4 @@
 #include "HittableList.h"
-#include <iostream>
 
 HittableList::HittableList() { max_val = 1; }
 

@@ -1,5 +1,4 @@
 #include "Triangle.h"
-#include <iostream>
 
 Triangle::Triangle()
     : A(glm::vec3(0, 0, 0)), B(glm::vec3(0, 0, 0)), C(glm::vec3(0, 0, 0)) {}
