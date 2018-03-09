@@ -24,6 +24,8 @@ Lighting (via Phong Reflection Model):
 
 * Specular
 
+* HDR tone-mapping via gamma-compression
+
 Projections:
 
 * Orthographic
