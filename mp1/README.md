@@ -42,6 +42,10 @@ Other Goodies:
 
 ## Sample Images
 
-![Perspective Image](images/perspective.png)
+Perspective image:
 
-![Orthographic Image](images/orthographic.png)
+* ![Perspective Image](images/perspective.png)
+
+Orthographic image:
+
+* ![Orthographic Image](images/orthographic.png)
