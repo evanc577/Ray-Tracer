@@ -145,40 +145,45 @@ int main(int argc, char *argv[]) {
     r.addLight(&l1);
 
     DirectionalLight l2;
-    l2.direction = glm::normalize(glm::vec3(1,-0.4,-0.5));
+    l2.direction = glm::normalize(glm::vec3(0.3,-1,0.2));
+    l2.ia = glm::vec3(0,0,0);
     l2.id = glm::vec3(0.9,0.9,0.9);
-    l2.is = glm::vec3(0.5,0.5,0.5);
+    l2.is = glm::vec3(0.9,0.9,0.9);
     r.addLight(&l2);
 
     // DirectionalLight l3;
     // l3.direction = glm::normalize(glm::vec3(-1,-0.4,-1));
-    // l3.color = glm::vec3(0.3,0.3,0.3);
+    // l3.id = glm::vec3(0.3,0.3,0.3);
+    // l3.is = glm::vec3(0.5,0.5,0.5);
     // r.addLight(&l3);
 
     // DirectionalLight l4;
     // l4.direction = glm::normalize(glm::vec3(0,-1,0));
-    // l3.color = glm::vec3(0.9,0.9,0.9);
+    // l3.id = glm::vec3(0.9,0.9,0.9);
+    // l3.is = glm::vec3(0.5,0.5,0.5);
     // r.addLight(&l4);
 
 
     // Spheres
-    Sphere s1(glm::vec3(0,0,-1), 0.2);
-    s1.ka = glm::vec3(0.6,0.1,0.1);
-    s1.kd = glm::vec3(0.6,0.1,0.1);
-    s1.ks = glm::vec3(1,1,1);
-    s1.alpha = 10;
+    Sphere s1(glm::vec3(0,0,-1.1), 0.2);
+    s1.ka = glm::vec3(0.9,0.1,0.1);
+    s1.kd = glm::vec3(0.9,0.1,0.1);
+    s1.ks = glm::vec3(0.5,0.5,0.5);
+    s1.alpha = 20;
     r.addHittable(&s1);
 
     Sphere s2(glm::vec3(0.5,0,-2), 0.2);
-    s2.ka = glm::vec3(0,0.6,0);
-    s2.kd = glm::vec3(0,0.6,0);
-    s2.ks = glm::vec3(1,1,1);
+    s2.ka = glm::vec3(0,0.9,0);
+    s2.kd = glm::vec3(0,0.9,0);
+    s2.ks = glm::vec3(0.5,0.5,0.5);
+    s2.alpha = 10;
     r.addHittable(&s2);
 
-    Sphere s3(glm::vec3(-0.4,-0.1,-1.1), 0.2);
-    s3.ka = glm::vec3(0.2,0.1,0.6);
-    s3.kd = glm::vec3(0.2,0.1,0.6);
-    s3.ks = glm::vec3(1,1,1);
+    Sphere s3(glm::vec3(-0.4,-0.1,-1), 0.2);
+    s3.ka = glm::vec3(0.9,0.3,0.6);
+    s3.kd = glm::vec3(0.9,0.3,0.6);
+    s3.ks = glm::vec3(0.5,0.5,0.5);
+    s3.alpha = 10;
     r.addHittable(&s3);
 
     // Sphere s4(vec3(1.4,-0.4,-1.9), 0.3);
@@ -187,19 +192,22 @@ int main(int argc, char *argv[]) {
     // r.addHittable(&s4);
 
     // Planes
-    CheckerPlane p1(glm::vec3(0,-1,-5), glm::normalize(glm::vec3(0,1,0)));
-    p1.ka1 = glm::vec3(0.6,0.6,0.6);
+    CheckerPlane p1(glm::vec3(0,-1,-5), glm::normalize(glm::vec3(0,1,0.2)));
+    p1.ka1 = glm::vec3(0.9,0.9,0.9);
     p1.ka2 = glm::vec3(0.1,0.1,0.1);
     p1.kd1 = p1.ka1;
     p1.kd2 = p1.ka2;
+    p1.ks1 = glm::vec3(0.1,0.1,0.1);
+    p1.ks2= glm::vec3(0.1,0.1,0.1);
     p1.tile_size = 0.2;
     r.addHittable(&p1);
 
     // Triangles
-    Triangle t1(glm::vec3(-0.25,-0.25,-1), glm::vec3(0.25,-0.25,-0.8),
-            glm::vec3(0,0.25,-1));
-    t1.ka = glm::vec3(0.6,0.6,0);
-    t1.kd = glm::vec3(0.6,0.6,0);
+    Triangle t1(glm::vec3(-0.25,-0.25,-1.2), glm::vec3(0.25,-0.25,-0.8),
+            glm::vec3(0,0.4,-1.3));
+    t1.ka = glm::vec3(0.9,0.9,0);
+    t1.kd = glm::vec3(0.9,0.9,0);
+    t1.ks = glm::vec3(0.5,0.5,0.5);
     r.addHittable(&t1);
 
     // render and write image to file

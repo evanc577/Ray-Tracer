@@ -209,7 +209,7 @@ void RayTracer::render() {
                 if (p[2] > max_val) max_val = p[2];
             }
         }
-        
+
         if (max_val > 1) {
             for (int i = 0; i < image_->width_; i++) {
                 for (int j = 0; j < image_->height_; j++) {
