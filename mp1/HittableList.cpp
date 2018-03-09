@@ -64,7 +64,7 @@ glm::vec3 HittableList::color(hit_record &rec, Light &l, const glm::vec3 &d) {
         if (temp_diffuse[0] < 0) temp_diffuse[0] = 0;
         if (temp_diffuse[1] < 0) temp_diffuse[1] = 0;
         if (temp_diffuse[2] < 0) temp_diffuse[2] = 0;
-        
+
         if (temp_diffuse[0] <= 0.0001f && temp_diffuse[1] <= 0.0001f &&
                 temp_diffuse[2] < 0.0001f) {
             pos_diffuse_list[i] = false;

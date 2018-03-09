@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     s3.alpha = 10;
     r.addHittable(&s3);
 
-    Sphere s4(glm::vec3(0.8,-0.4,-1.9), 0.3);
+    Sphere s4(glm::vec3(0.8,-0.4,-1.9), 0.1);
     s4.ka = glm::vec3(0.1,0.9,0.9);
     s4.kd = glm::vec3(0.1,0.9,0.9);
     s4.ks = 0.05f*glm::vec3(1,1,1);

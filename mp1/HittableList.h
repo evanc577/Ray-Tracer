@@ -20,7 +20,6 @@ class HittableList : public Hittable {
         // l is a light source, d is the direction from the camera to point
         virtual glm::vec3 color(hit_record &rec, Light &l, const glm::vec3 &d);
 
-
         std::vector<Hittable *> list_;
 };
 

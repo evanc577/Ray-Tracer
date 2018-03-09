@@ -210,11 +210,16 @@ void RayTracer::render() {
             }
         }
 
+        float gamma = 0.9f;
+        float A = pow(max_val, -gamma);
         if (max_val > 1) {
             for (int i = 0; i < image_->width_; i++) {
                 for (int j = 0; j < image_->height_; j++) {
                     glm::vec3 & p = image_->getPixel(i,j);
-                    p /= max_val;
+                    for (int k = 0; k < 3; k++) {
+                        p[k] = A*pow(p[k], gamma);
+                    }
+                    // p /= max_val;
                 }
             }
         }
