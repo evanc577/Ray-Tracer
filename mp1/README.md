@@ -1,8 +1,6 @@
-# MP1
+# MP1 --- Basic Ray Tracer
 
-## Basic Ray Tracer
-
-Supported Objects:
+Objects:
 
 * Spheres
 
@@ -10,7 +8,7 @@ Supported Objects:
 
 * Triangles
 
-Supported Light Types:
+Light Types:
 
 * Ambient lights
 
@@ -44,10 +42,10 @@ Other Goodies:
 
 ## Sample Images
 
-Perspective image:
+Perspective image
 
 ![Perspective Image](images/perspective.png)
 
-Orthographic image:
+Orthographic image
 
 ![Orthographic Image](images/orthographic.png)
