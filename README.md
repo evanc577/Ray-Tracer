@@ -1,3 +1,1 @@
-# cs296
-
-## simple ray tracing program
+# simple ray tracing program
