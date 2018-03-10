@@ -12,7 +12,7 @@
 #include "Image.h"
 #include "LightList.h"
 #include "Ray.h"
-#include "glm/glm/glm.hpp"
+#include "vec3.h"
 
 class RayTracer {
  public:
@@ -55,8 +55,8 @@ class RayTracer {
   void linearToSRGB();
   float sRGB_max;
 
-  glm::vec3 color(const Ray &r);
-  glm::vec3 randomInUnitSphere();
+  vec3 color(const Ray &r);
+  vec3 randomInUnitSphere();
 
   HittableList hittables;
   LightList lights;

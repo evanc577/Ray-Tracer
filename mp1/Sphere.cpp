@@ -1,13 +1,13 @@
 #include "Sphere.h"
 
-Sphere::Sphere() : center(glm::vec3(0, 0, 0)), radius(1) {}
+Sphere::Sphere() : center(vec3(0, 0, 0)), radius(1) {}
 
-Sphere::Sphere(glm::vec3 c, float r) : center(c), radius(r) {}
+Sphere::Sphere(vec3 c, float r) : center(c), radius(r) {}
 
 bool Sphere::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
                  Light& l) const {
   (void)l;
-  glm::vec3 oc = r.origin() - center;
+  vec3 oc = r.origin() - center;
   float a = dot(r.direction(), r.direction());
   float b = dot(oc, r.direction());
   float c = dot(oc, oc) - radius * radius;

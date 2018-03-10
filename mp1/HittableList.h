@@ -18,7 +18,7 @@ class HittableList : public Hittable {
 
   // returns a vector defining the color at the point defined in rec.
   // l is a light source, d is the direction from the camera to point
-  virtual glm::vec3 color(hit_record &rec, Light &l, const glm::vec3 &d);
+  virtual vec3 color(hit_record &rec, Light &l, const vec3 &d);
 
   std::vector<Hittable *> list_;
 };

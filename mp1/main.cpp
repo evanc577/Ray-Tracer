@@ -5,6 +5,7 @@
 #include "CheckerPlane.h"
 #include "DirectionalLight.h"
 #include "Plane.h"
+#include "PointLight.h"
 #include "RayTracer.h"
 #include "Sphere.h"
 #include "Triangle.h"
@@ -129,63 +130,63 @@ int main(int argc, char *argv[]) {
 
   // Lights
   AmbientLight l1;
-  l1.ia = glm::vec3(0.1, 0.1, 0.1);
+  l1.ia = 0.1f * vec3(1, 1, 1);
   r.addLight(&l1);
 
   DirectionalLight l2;
-  l2.direction = glm::normalize(glm::vec3(0.5, -1, 0));
-  l2.id = glm::vec3(0.9, 0.9, 0.9);
-  l2.is = glm::vec3(0.9, 0.9, 0.9);
+  l2.direction = normalize(vec3(0.5, -1, 0));
+  l2.id = 0.9f * vec3(1, 1, 1);
+  l2.is = 0.9f * vec3(1, 1, 1);
   r.addLight(&l2);
 
   DirectionalLight l3;
-  l3.direction = glm::normalize(glm::vec3(-0.5, -1, -0.5));
-  l3.id = glm::vec3(0.9, 0.9, 0.9);
-  l3.is = glm::vec3(0.9, 0.9, 0.9);
+  l3.direction = normalize(vec3(-0.5, -1, -0.5));
+  l3.id = 0.9f * vec3(1, 1, 1);
+  l3.is = 0.9f * vec3(1, 1, 1);
   r.addLight(&l3);
 
-  // DirectionalLight l4;
-  // l4.direction = glm::normalize(glm::vec3(0,-1,0));
-  // l3.id = glm::vec3(0.9,0.9,0.9);
-  // l3.is = glm::vec3(0.5,0.5,0.5);
-  // r.addLight(&l4);
+  PointLight l4;
+  l4.point = vec3(0, 1.5, -1.5);
+  l4.id = 6.0f * vec3(1, 1, 1);
+  l4.is = 6.0f * vec3(1, 1, 1);
+  r.addLight(&l4);
 
   // Spheres
-  Sphere s1(glm::vec3(0, 0, -1.1), 0.2);
-  s1.ka = glm::vec3(1, 0.1, 0.1);
-  s1.kd = glm::vec3(1, 0.1, 0.1);
-  s1.ks = 0.5f * glm::vec3(1, 1, 1);
+  Sphere s1(vec3(0, 0, -1.1), 0.2);
+  s1.ka = vec3(1, 0.1, 0.1);
+  s1.kd = vec3(1, 0.1, 0.1);
+  s1.ks = 0.5f * vec3(1, 1, 1);
   s1.alpha = 10;
   r.addHittable(&s1);
 
-  Sphere s2(glm::vec3(0.7, 0, -2), 0.2);
-  s2.ka = glm::vec3(0, 1, 0);
-  s2.kd = glm::vec3(0, 1, 0);
-  s2.ks = 0.5f * glm::vec3(1, 1, 1);
+  Sphere s2(vec3(0.7, 0, -2), 0.2);
+  s2.ka = vec3(0.2, 1, 0.2);
+  s2.kd = vec3(0.2, 1, 0.2);
+  s2.ks = 0.5f * vec3(1, 1, 1);
   s2.alpha = 10;
   r.addHittable(&s2);
 
-  Sphere s3(glm::vec3(-0.4, -0.1, -1), 0.15);
-  s3.ka = glm::vec3(1, 0.1, 1);
-  s3.kd = glm::vec3(1, 0.1, 1);
-  s3.ks = 0.5f * glm::vec3(1, 1, 1);
+  Sphere s3(vec3(-0.4, -0.1, -1), 0.15);
+  s3.ka = vec3(1, 0.1, 1);
+  s3.kd = vec3(1, 0.1, 1);
+  s3.ks = 0.5f * vec3(1, 1, 1);
   s3.alpha = 10;
   r.addHittable(&s3);
 
-  Sphere s4(glm::vec3(0.8, -0.4, -1.9), 0.1);
-  s4.ka = glm::vec3(0.1, 0.9, 0.9);
-  s4.kd = glm::vec3(0.1, 0.9, 0.9);
-  s4.ks = 0.05f * glm::vec3(1, 1, 1);
-  s4.alpha = 30;
+  Sphere s4(vec3(0.8, -0.4, -1.9), 0.1);
+  s4.ka = vec3(0.1, 0.9, 0.9);
+  s4.kd = vec3(0.1, 0.9, 0.9);
+  s4.ks = 0.5f * vec3(1, 1, 1);
+  s4.alpha = 15;
   r.addHittable(&s4);
 
   // Planes
-  CheckerPlane p1(glm::vec3(0, -0.5, -2), glm::normalize(glm::vec3(0, 1, 0.4)));
-  p1.ka1 = glm::vec3(0.9, 0.9, 0.9);
-  p1.ka2 = glm::vec3(0.1, 0.1, 0.1);
+  CheckerPlane p1(vec3(0, -0.5, -2), normalize(vec3(0, 1, 0.4)));
+  p1.ka1 = vec3(0.9, 0.9, 0.9);
+  p1.ka2 = vec3(0.1, 0.1, 0.1);
   p1.kd1 = p1.ka1;
   p1.kd2 = p1.ka2;
-  p1.ks1 = glm::vec3(0.1, 0.1, 0.1);
+  p1.ks1 = vec3(0.1, 0.1, 0.1);
   p1.ks2 = p1.ks1;
   p1.alpha1 = 3;
   p1.alpha2 = 3;
@@ -193,11 +194,11 @@ int main(int argc, char *argv[]) {
   r.addHittable(&p1);
 
   // Triangles
-  Triangle t1(glm::vec3(-0.25, -0.25, -1.2), glm::vec3(0.2, -0.25, -0.8),
-              glm::vec3(0, 0.35, -1.3));
-  t1.ka = glm::vec3(0.9, 0.9, 0);
-  t1.kd = glm::vec3(0.9, 0.9, 0);
-  t1.ks = glm::vec3(0.5, 0.5, 0.5);
+  Triangle t1(vec3(-0.25, -0.25, -1.2), vec3(0.2, -0.25, -0.8),
+              vec3(0, 0.35, -1.3));
+  t1.ka = vec3(0.9, 0.9, 0);
+  t1.kd = vec3(0.9, 0.9, 0);
+  t1.ks = vec3(0.5, 0.5, 0.5);
   r.addHittable(&t1);
 
   // render and write image to file

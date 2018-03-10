@@ -1,17 +1,16 @@
 #include "LightList.h"
-#include <iostream>
 
 LightList::LightList() : Light() {}
 
 LightList::LightList(std::vector<Light *> l) : Light() { list = l; }
 
-bool LightList::AtPoint(const glm::vec3 &p, std::vector<glm::vec3> &ca,
-                        std::vector<glm::vec3> &cd, std::vector<glm::vec3> &cs,
-                        std::vector<glm::vec3> &d) {
-  std::vector<glm::vec3> temp_ca;
-  std::vector<glm::vec3> temp_cd;
-  std::vector<glm::vec3> temp_cs;
-  std::vector<glm::vec3> temp_d;
+bool LightList::AtPoint(const vec3 &p, std::vector<vec3> &ca,
+                        std::vector<vec3> &cd, std::vector<vec3> &cs,
+                        std::vector<vec3> &d) {
+  std::vector<vec3> temp_ca;
+  std::vector<vec3> temp_cd;
+  std::vector<vec3> temp_cs;
+  std::vector<vec3> temp_d;
 
   bool directional = false;
   for (int i = 0; i < (int)list.size(); i++) {
@@ -23,7 +22,7 @@ bool LightList::AtPoint(const glm::vec3 &p, std::vector<glm::vec3> &ca,
     cs.insert(cs.end(), temp_cs.begin(), temp_cs.end());
 
     for (int j = 0; j < (int)temp_d.size(); j++) {
-      d.push_back(glm::normalize(temp_d[j]));
+      d.push_back(normalize(temp_d[j]));
     }
   }
   return directional;

@@ -48,7 +48,7 @@ void RayTracer::outputImage(std::string filename) const {
   png::image<png::rgb_pixel> output_image(image_->width_, image_->height_);
   for (png::uint_32 y = 0; y < output_image.get_height(); ++y) {
     for (png::uint_32 x = 0; x < output_image.get_width(); ++x) {
-      glm::vec3 &pix = image_->getPixel(x, y);
+      vec3 &pix = image_->getPixel(x, y);
       output_image[image_->height_ - y - 1][x] =
           png::rgb_pixel(255 * pix[0], 255 * pix[1], 255 * pix[2]);
     }
@@ -72,12 +72,12 @@ void RayTracer::renderSection(int thread, int num_threads) {
   float left = -1;
   float lower = -1 * float(image_->height_) / float(image_->width_);
 
-  glm::vec3 corner(left, lower, 0.0);
-  glm::vec3 corner_persp(left, lower, -1.0);
-  glm::vec3 horz(2.0, 0.0, 0.0);
-  glm::vec3 vert(0.0, -2.0 * lower, 0.0);
-  glm::vec3 origin(0.0, 0.0, 0.0);
-  glm::vec3 orthoDirection = corner_persp - corner;
+  vec3 corner(left, lower, 0.0);
+  vec3 corner_persp(left, lower, -1.0);
+  vec3 horz(2.0, 0.0, 0.0);
+  vec3 vert(0.0, -2.0 * lower, 0.0);
+  vec3 origin(0.0, 0.0, 0.0);
+  vec3 orthoDirection = corner_persp - corner;
 
   if (aa_factor_ < 1) {
     std::cout << "invalid antialias factor,"
@@ -104,14 +104,14 @@ void RayTracer::renderSection(int thread, int num_threads) {
           r.setOrigin(origin);
           r.setDirection(corner_persp + temp_u * horz + temp_v * vert);
         }
-        glm::vec3 col = color(r);
-        glm::vec3 &pix = image_->getPixel(i, j);
+        vec3 col = color(r);
+        vec3 &pix = image_->getPixel(i, j);
         pix = col;
       }
 
       // if antialiasing is enabled
       else {
-        glm::vec3 col(0, 0, 0);
+        vec3 col(0, 0, 0);
         for (int k = 0; k < aa_factor_; k++) {
           float range_begin = float(k) / float(aa_factor_);
           float range_end = float(k + 1) / float(aa_factor_);
@@ -131,8 +131,8 @@ void RayTracer::renderSection(int thread, int num_threads) {
           col += color(r);
         }
         float aa_float_ = float(aa_factor_);
-        col /= glm::vec3(aa_float_, aa_float_, aa_float_);
-        glm::vec3 &pix = image_->getPixel(i, j);
+        col /= vec3(aa_float_, aa_float_, aa_float_);
+        vec3 &pix = image_->getPixel(i, j);
         pix = col;
       }
     }
@@ -178,7 +178,7 @@ void RayTracer::render() {
   if (hittables.max_val > 1) {
     for (int i = 0; i < image_->width_; i++) {
       for (int j = 0; j < image_->height_; j++) {
-        glm::vec3 &p = image_->getPixel(i, j);
+        vec3 &p = image_->getPixel(i, j);
         for (int k = 0; k < 3; k++) {
           p[k] = A * pow(p[k], gamma);
         }
@@ -194,12 +194,12 @@ void RayTracer::render() {
   std::cout << "done, took " << duration << "ms\n";
 }
 
-glm::vec3 RayTracer::color(const Ray &r) {
+vec3 RayTracer::color(const Ray &r) {
   hit_record rec;
   if (hittables.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
     return hittables.color(rec, lights, r.direction());
   } else {
-    return glm::vec3(0, 0, 0);
+    return vec3(0, 0, 0);
   }
 }
 

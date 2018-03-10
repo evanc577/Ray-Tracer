@@ -1,15 +1,15 @@
 #include "Triangle.h"
 
 Triangle::Triangle()
-    : A(glm::vec3(0, 0, 0)), B(glm::vec3(0, 0, 0)), C(glm::vec3(0, 0, 0)) {}
+    : A(vec3(0, 0, 0)), B(vec3(0, 0, 0)), C(vec3(0, 0, 0)) {}
 
-Triangle::Triangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) : A(a), B(b), C(c) {}
+Triangle::Triangle(vec3 a, vec3 b, vec3 c) : A(a), B(b), C(c) {}
 
 bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const {
   (void)l;
 
-  glm::vec3 edge1, edge2, n, h, s, q;
+  vec3 edge1, edge2, n, h, s, q;
   float a, f, u, v;
   edge1 = B - A;
   edge2 = C - A;
@@ -32,7 +32,7 @@ bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
   if (t < t_max && t > t_min) {
     rec.t = t;
     rec.p = r.location(rec.t);
-    rec.normal = glm::normalize(n);
+    rec.normal = normalize(n);
     rec.ka = ka;
     rec.kd = kd;
     rec.ks = ks;

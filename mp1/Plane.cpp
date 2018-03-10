@@ -1,7 +1,7 @@
 #include "Plane.h"
 
-Plane::Plane() : point(glm::vec3(0, 0, 0)), normal(glm::vec3(0, 0, 1)) {}
-Plane::Plane(glm::vec3 p, glm::vec3 n) : point(p), normal(normalize(n)) {}
+Plane::Plane() : point(vec3(0, 0, 0)), normal(vec3(0, 0, 1)) {}
+Plane::Plane(vec3 p, vec3 n) : point(p), normal(normalize(n)) {}
 
 bool Plane::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                 Light &l) const {

@@ -6,16 +6,16 @@
 
 struct hit_record {
   float t;
-  glm::vec3 p;
-  glm::vec3 normal;
+  vec3 p;
+  vec3 normal;
 
-  glm::vec3 ka;
+  vec3 ka;
 
-  glm::vec3 kd;
-  glm::vec3 l;
+  vec3 kd;
+  vec3 l;
 
-  glm::vec3 ks;
-  glm::vec3 r;
+  vec3 ks;
+  vec3 r;
   float alpha;
 };
 
@@ -26,9 +26,9 @@ class Hittable {
 
   virtual ~Hittable() {}
 
-  glm::vec3 ka = glm::vec3(1, 1, 1);
-  glm::vec3 kd = glm::vec3(1, 1, 1);
-  glm::vec3 ks = glm::vec3(1, 1, 1);
+  vec3 ka = vec3(1, 1, 1);
+  vec3 kd = vec3(1, 1, 1);
+  vec3 ks = vec3(1, 1, 1);
   float alpha = 5;
 };
 #endif

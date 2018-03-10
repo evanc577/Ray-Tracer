@@ -2,7 +2,7 @@
 #define IMAGE_H
 
 #include <vector>
-#include "glm/glm/glm.hpp"
+#include "vec3.h"
 
 class Image {
  public:
@@ -12,14 +12,14 @@ class Image {
   ~Image();
   Image &operator=(const Image &other);
 
-  glm::vec3 &getPixel(int x, int y) const;
-  bool setPixel(int x, int y, const glm::vec3 &p);
+  vec3 &getPixel(int x, int y) const;
+  bool setPixel(int x, int y, const vec3 &p);
 
   int width_;
   int height_;
 
  private:
-  std::vector<std::vector<glm::vec3> > *image;
+  std::vector<std::vector<vec3> > *image;
   void _clear();
 };
 
