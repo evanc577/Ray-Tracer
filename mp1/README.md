@@ -14,6 +14,8 @@ Light Types:
 
 * Directional lights
 
+* Point lights
+
 Lighting (via Phong Reflection Model):
 
 * Ambient
