@@ -1,3 +1,0 @@
-/home/evan/cs/Ray-Tracer/mp1/include/CMakeFiles/rebuild_cache.dir
-/home/evan/cs/Ray-Tracer/mp1/include/CMakeFiles/mp1.dir
-/home/evan/cs/Ray-Tracer/mp1/include/CMakeFiles/edit_cache.dir
