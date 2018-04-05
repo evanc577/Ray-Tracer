@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # MP2 --- Basic Ray Tracer with BVH
+=======
+# MP1 --- Basic Ray Tracer
+>>>>>>> mp1
 
 Objects:
 
