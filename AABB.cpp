@@ -36,7 +36,7 @@ void AABB::generate_tree(const std::vector<Hittable*>& l) {
 
     // create BVH nodes
     int pivot = (right - left) / 2;
-    Node n = {nullptr, std::make_tuple(lower, upper), pivot / 2 - left - 1};
+    Node n = {nullptr, std::make_tuple(lower, upper), pivot - left};
     if (right == left) {
       n.item = temp_vector[right];
       n.offset = 0;
@@ -48,7 +48,7 @@ void AABB::generate_tree(const std::vector<Hittable*>& l) {
       stk.push(std::make_tuple(pivot + 1, right, (d + 1) % 3));
     }
     if (pivot > left) {
-      stk.push(std::make_tuple(left, pivot - 1, (d + 1) % 3));
+      stk.push(std::make_tuple(left, pivot, (d + 1) % 3));
     }
   }
 }
