@@ -6,6 +6,7 @@ AABB::AABB(const std::vector<Hittable*>& l) { generate_tree(l); }
 
 void AABB::generate_tree(const std::vector<Hittable*>& l) {
   std::vector<Hittable*> temp_vector = l;
+  // tuples in form (left_index, right_index, axis)
   std::stack<std::tuple<int, int, int>> stk;
 
   stk.push(std::make_tuple(0, temp_vector.size(), 0));
@@ -16,7 +17,9 @@ void AABB::generate_tree(const std::vector<Hittable*>& l) {
     stk.pop();
 
     std::sort(temp_vector.begin() + left, temp_vector.end() + right,
-              [&](vec3 a, vec3 b) { return a[d] < b[d]; });
+              [&](Hittable* a, Hittable* b) {
+                return a->get_center()[d] < b->get_center()[d];
+              });
 
     // calculate bounding box
     vec3 lower, upper;
