@@ -7,6 +7,13 @@ HittableList::HittableList(std::vector<Hittable *> l) {
   max_val = 1;
 }
 
+inline bool HittableList::is_bounded() const {
+  for (const Hittable* h : list_) {
+    if (!h->is_bounded()) return false;
+  }
+  return true;
+}
+
 bool HittableList::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                        Light &l) const {
   hit_record temp;

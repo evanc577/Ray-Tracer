@@ -3,6 +3,8 @@
 Plane::Plane() : point(vec3(0, 0, 0)), normal(vec3(0, 0, 1)) {}
 Plane::Plane(vec3 p, vec3 n) : point(p), normal(normalize(n)) {}
 
+inline bool Plane::is_bounded() const { return true; }
+
 bool Plane::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                 Light &l) const {
   (void)l;

@@ -21,6 +21,8 @@ CheckerPlane::CheckerPlane(vec3 p, vec3 n) : Plane(p, n) {
   alpha2 = alpha1;
 }
 
+inline bool CheckerPlane::is_bounded() const { return false; }
+
 vec3 CheckerPlane::orthogonal(vec3 n) const {
   if (n[2] != 0) return vec3(0, 1, 0);
   return normalize(vec3(-n[1], n[0], 0));

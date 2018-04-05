@@ -12,6 +12,8 @@ class HittableList : public Hittable {
 
   float max_val;
 
+  inline bool is_bounded() const;
+
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 

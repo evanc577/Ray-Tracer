@@ -9,6 +9,7 @@ class CheckerPlane : public Plane {
   CheckerPlane();
   CheckerPlane(vec3 p, vec3 n);
 
+  inline bool is_bounded() const;
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
