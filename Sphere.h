@@ -12,6 +12,7 @@ class Sphere : public Hittable {
 
   inline virtual bool is_bounded() const;
   virtual std::tuple<vec3, vec3> get_bounds() const;
+  vec3 get_center() const;
 
   vec3 center;
   float radius;

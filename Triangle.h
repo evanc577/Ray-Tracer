@@ -14,6 +14,8 @@ class Triangle : public Hittable {
   inline bool is_bounded() const;
 
   std::tuple<vec3, vec3> get_bounds() const;
+  inline vec3 get_center() const;
+
   vec3 A;
   vec3 B;
   vec3 C;

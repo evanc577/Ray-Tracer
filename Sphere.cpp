@@ -12,6 +12,8 @@ std::tuple<vec3, vec3> Sphere::get_bounds() const {
       vec3(center[0] + radius, center[1] + radius, center[2] + radius));
 }
 
+inline vec3 Sphere::get_center() const { return center; }
+
 bool Sphere::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
                  Light& l) const {
   (void)l;

@@ -26,6 +26,10 @@ std::tuple<vec3, vec3> Triangle::get_bounds() const {
   return std::make_tuple(a, b);
 }
 
+inline vec3 Triangle::get_center() const {
+  return vec3((A[0]+B[0]+C[0])/3, (A[1]+B[1]+C[1])/3, (A[2]+B[2]+C[2])/3);
+}
+
 bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const {
   (void)l;

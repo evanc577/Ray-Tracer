@@ -35,5 +35,6 @@ class Hittable {
   inline virtual bool is_bounded() const = 0;
 
   std::tuple<vec3, vec3> get_bounds() const;
+  inline vec3 get_center() const;
 };
 #endif
