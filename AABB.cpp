@@ -23,8 +23,9 @@ void AABB::generate_tree(const std::vector<Hittable*>& l) {
 
     // calculate bounding box
     vec3 lower, upper;
-    for (Hittable*& h : temp_vector) {
-      std::tuple<vec3, vec3> b = h->get_bounds();
+    for (auto it = temp_vector.begin() + left;
+         it != temp_vector.begin() + right; ++it) {
+      std::tuple<vec3, vec3> b = (*it)->get_bounds();
       if (std::get<0>(b)[0] < lower[0]) lower[0] = std::get<0>(b)[0];
       if (std::get<0>(b)[1] < lower[1]) lower[1] = std::get<0>(b)[1];
       if (std::get<0>(b)[2] < lower[2]) lower[1] = std::get<0>(b)[2];
