@@ -1,4 +1,4 @@
-# MP1 --- Basic Ray Tracer
+# MP2 --- Basic Ray Tracer with BVH
 
 Objects:
 
