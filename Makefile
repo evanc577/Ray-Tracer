@@ -3,7 +3,7 @@ CXXFLAGS = -O3 -g -std=c++1y -Wall -Wextra -Wpedantic
 EXE= mp2
 OBJS = main.o RayTracer.o Image.o LightList.o AmbientLight.o \
 	   DirectionalLight.o HittableList.o Sphere.o Plane.o CheckerPlane.o \
-	   Triangle.o PointLight.o
+	   Triangle.o PointLight.o AABB.o
 LD = clang++
 LDFLAGS = -std=c++1y -lpthread -lpng
 
@@ -37,6 +37,9 @@ PointLight.o : PointLight.h PointLight.cpp Light.h
 
 HittableList.o : HittableList.h HittableList.cpp Hittable.h Light.h
 	$(CXX) -c $(CXXFLAGS) HittableList.cpp
+
+AABB.o : AABB.h AABB.cpp Hittable.h
+	$(CXX) -c $(CXXFLAGS) AABB.cpp
 
 Sphere.o : Sphere.h Sphere.cpp Hittable.h
 	$(CXX) -c $(CXXFLAGS) Sphere.cpp

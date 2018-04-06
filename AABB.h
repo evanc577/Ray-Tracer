@@ -5,12 +5,10 @@
 #include <stack>
 #include <tuple>
 #include "Hittable.h"
+#include "HittableList.h"
 #include "Light.h"
 
-inline float ffmin(float a, float b) { return a < b ? a : b; }
-inline float max(float a, float b) { return a > b ? a : b; }
-
-class AABB {
+class AABB : public Hittable {
  public:
   struct Node {
     Hittable *item;
@@ -19,19 +17,34 @@ class AABB {
   };
 
   AABB();
-  AABB(const std::vector<Hittable*>& l);
+
+  ~AABB() {}
+
+  inline bool is_bounded() const;
 
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
+  virtual vec3 color(hit_record &rec, Light &l, const vec3 &d);
+
+  virtual void add_hittable(Hittable* h);
+
+  virtual void generate();
+  
+  vec3 get_center() const { return vec3(0, 0, 0); }
+
+  std::tuple<vec3, vec3> get_bounds() const {
+    return std::make_tuple(vec3(0,0,0), vec3(0,0,0));
+  }
 
   std::vector<Node> tree_;
+  std::vector<Hittable*> list_;
   std::vector<Hittable*> unbounded_list_;
 
  private:
-  void generate_tree(const std::vector<Hittable*>& l);
   int partition(std::vector<Hittable*>& l, int left, int right, int pivot_index) const;
   void swap(Hittable*& a, Hittable*& b) const;
+  bool intersects_BB(const Ray &r, int index, int t_min, int t_max) const;
 };
 
 #endif

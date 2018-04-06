@@ -146,6 +146,8 @@ void RayTracer::render() {
     return;
   }
 
+  hittables.generate();
+
   // time start
   std::chrono::high_resolution_clock::time_point t1 =
       std::chrono::high_resolution_clock::now();
@@ -156,14 +158,12 @@ void RayTracer::render() {
     std::vector<std::thread> threads(num_threads);
 
     int thread = 0;
-    for (std::vector<std::thread>::iterator it = threads.begin();
-         it != threads.end(); ++it) {
-      (*it) = std::thread([=] { renderSection(thread, num_threads); });
+    for (auto& t : threads) {
+      t = std::thread([=] { renderSection(thread, num_threads); });
       thread++;
     }
-    for (std::vector<std::thread>::iterator it = threads.begin();
-         it != threads.end(); ++it) {
-      (*it).join();
+    for (auto& t : threads) {
+      t.join();
     }
   }
 
@@ -203,7 +203,7 @@ vec3 RayTracer::color(const Ray &r) {
   }
 }
 
-void RayTracer::addHittable(Hittable *h) { hittables.list_.push_back(h); }
+void RayTracer::addHittable(Hittable *h) { hittables.add_hittable(h); }
 
 void RayTracer::clearHittables() { hittables.list_.clear(); }
 

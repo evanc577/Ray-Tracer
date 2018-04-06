@@ -8,6 +8,7 @@
 #include <random>
 #include <string>
 #include <thread>
+#include "AABB.h"
 #include "HittableList.h"
 #include "Image.h"
 #include "LightList.h"
@@ -58,7 +59,10 @@ class RayTracer {
   vec3 color(const Ray &r);
   vec3 randomInUnitSphere();
 
-  HittableList hittables;
+
+  // HittableList hittables;
+  AABB hittables;
+
   LightList lights;
 
   std::default_random_engine generator;

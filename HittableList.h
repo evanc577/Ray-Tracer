@@ -10,18 +10,21 @@ class HittableList : public Hittable {
   HittableList();
   HittableList(std::vector<Hittable *> l);
 
-  float max_val;
-
   inline bool is_bounded() const;
 
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
-  // returns a vector defining the color at the point defined in rec.
-  // l is a light source, d is the direction from the camera to point
-  virtual vec3 color(hit_record &rec, Light &l, const vec3 &d);
+  virtual void add_hittable(Hittable* h);
+
+  virtual void generate() {}
 
   std::vector<Hittable *> list_;
+
+  std::tuple<vec3, vec3> get_bounds() const {
+    return std::make_tuple(vec3(0,0,0), vec3(0,0,0));
+  }
+  vec3 get_center() const { return vec3(0,0,0); }
 };
 
 #endif
