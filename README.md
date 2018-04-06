@@ -54,10 +54,12 @@ Orthographic image
 
 ![Orthographic Image](images/orthographic.png)
 
-Bounding Volume Hierarchy test with 2^18 spheres
+## Bounding Volume Hierarchy
 
-![BVH Image](images/bvh.png)
-
-Bounding Volume Hierarchy scalability
+Scenes with many objects can be accelerated with a BVH
 
 ![BVH Scalability](images/bvh_chart.png)
+
+Test with 2^18 spheres
+
+![BVH Image](images/bvh.png)
