@@ -34,6 +34,8 @@ Projections:
 
 Other Goodies:
 
+* Acceleration of large number of objects via a bounded volume hierarchy
+
 * Arbitrary image size support
 
 * Anti-aliasing support (arbitrary positive integers)
@@ -51,3 +53,7 @@ Perspective image
 Orthographic image
 
 ![Orthographic Image](images/orthographic.png)
+
+Bounded Volume Hierarchy test with 2^18 spheres
+
+![BVH Image](images/bvh.png)
