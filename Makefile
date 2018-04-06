@@ -17,7 +17,7 @@ main.o : main.cpp RayTracer.o Image.o Sphere.o Plane.o CheckerPlane.o \
 	$(CXX) -c $(CXXFLAGS) main.cpp
 
 RayTracer.o : RayTracer.cpp RayTracer.h Image.o \
-	Ray.h HittableList.o LightList.h
+	Ray.h HittableList.o LightList.h PerspCamera.o
 	$(CXX) -c $(CXXFLAGS) RayTracer.cpp
 
 Image.o : Image.h Image.cpp
@@ -52,6 +52,9 @@ CheckerPlane.o : CheckerPlane.h CheckerPlane.cpp Plane.o
 
 Triangle.o : Triangle.h Triangle.cpp Hittable.h
 	$(CXX) -c $(CXXFLAGS) Triangle.cpp
+
+PerspCamera.o : PerspCamera.h PerspCamera.cpp Camera.h
+	$(CXX) -c $(CXXFLAGS) PerspCamera.cpp
 
 clean :
 	rm -rf *.o $(EXE)

@@ -7,6 +7,7 @@ RayTracer::RayTracer() : image_(NULL) {
   multithread = false;
   ortho = true;
   BVH = true;
+  cam.set_camera(vec3(0,0,0), vec3(0,0,-1), vec3(0,1,0), 1, 90);
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
@@ -19,6 +20,7 @@ RayTracer::RayTracer(unsigned w, unsigned h) : image_(NULL) {
   multithread = false;
   ortho = true;
   BVH = true;
+  cam.set_camera(vec3(0,0,0), vec3(0,0,-1), vec3(0,1,0), (float)w/h, 90);
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);

@@ -9,6 +9,8 @@
 #include <string>
 #include <thread>
 #include "AABB.h"
+#include "OrthoCamera.h"
+#include "PerspCamera.h"
 #include "HittableList.h"
 #include "Image.h"
 #include "LightList.h"
@@ -46,6 +48,8 @@ class RayTracer {
   bool multithread;
 
   bool BVH;
+
+  PerspCamera cam;
 
  private:
   void _copy(const RayTracer &other);
