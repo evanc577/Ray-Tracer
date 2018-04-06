@@ -45,7 +45,7 @@ class RayTracer {
 
   bool multithread;
 
-  bool sRGB;
+  bool BVH;
 
  private:
   void _copy(const RayTracer &other);
@@ -60,8 +60,8 @@ class RayTracer {
   vec3 randomInUnitSphere();
 
 
-  // HittableList hittables;
-  AABB hittables;
+  HittableList hittables;
+  AABB hittables_BVH;
 
   LightList lights;
 

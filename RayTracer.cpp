@@ -6,6 +6,7 @@ RayTracer::RayTracer() : image_(NULL) {
   aa_factor_ = 1;
   multithread = false;
   ortho = true;
+  BVH = true;
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
@@ -17,6 +18,7 @@ RayTracer::RayTracer(unsigned w, unsigned h) : image_(NULL) {
   aa_factor_ = 1;
   multithread = false;
   ortho = true;
+  BVH = true;
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
@@ -146,7 +148,11 @@ void RayTracer::render() {
     return;
   }
 
-  hittables.generate();
+  if (BVH) {
+    hittables_BVH.generate();
+  } else {
+    hittables.generate();
+  }
 
   // time start
   std::chrono::high_resolution_clock::time_point t1 =
@@ -174,13 +180,27 @@ void RayTracer::render() {
 
   // scale values to avoid exceeding 1
   float gamma = 0.9f;
-  float A = pow(hittables.max_val, -gamma);
-  if (hittables.max_val > 1) {
-    for (int i = 0; i < image_->width_; i++) {
-      for (int j = 0; j < image_->height_; j++) {
-        vec3 &p = image_->getPixel(i, j);
-        for (int k = 0; k < 3; k++) {
-          p[k] = A * pow(p[k], gamma);
+  if (BVH) {
+    float A = pow(hittables_BVH.max_val, -gamma);
+    if (hittables_BVH.max_val > 1) {
+      for (int i = 0; i < image_->width_; i++) {
+        for (int j = 0; j < image_->height_; j++) {
+          vec3 &p = image_->getPixel(i, j);
+          for (int k = 0; k < 3; k++) {
+            p[k] = A * pow(p[k], gamma);
+          }
+        }
+      }
+    }
+  } else {
+    float A = pow(hittables.max_val, -gamma);
+    if (hittables.max_val > 1) {
+      for (int i = 0; i < image_->width_; i++) {
+        for (int j = 0; j < image_->height_; j++) {
+          vec3 &p = image_->getPixel(i, j);
+          for (int k = 0; k < 3; k++) {
+            p[k] = A * pow(p[k], gamma);
+          }
         }
       }
     }
@@ -196,16 +216,38 @@ void RayTracer::render() {
 
 vec3 RayTracer::color(const Ray &r) {
   hit_record rec;
-  if (hittables.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
-    return hittables.color(rec, lights, r.direction());
+  if (BVH) {
+    if (hittables_BVH.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
+      return hittables_BVH.color(rec, lights, r.direction());
+    } else {
+      return vec3(0, 0, 0);
+    } 
   } else {
-    return vec3(0, 0, 0);
+    if (hittables.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
+      return hittables.color(rec, lights, r.direction());
+    } else {
+      return vec3(0, 0, 0);
+    }
   }
 }
 
-void RayTracer::addHittable(Hittable *h) { hittables.add_hittable(h); }
+void RayTracer::addHittable(Hittable *h) { 
+  if (BVH) {
+    hittables_BVH.add_hittable(h);
+  } else {
+    hittables.add_hittable(h);
+  }
+}
 
-void RayTracer::clearHittables() { hittables.list_.clear(); }
+void RayTracer::clearHittables() { 
+  if (BVH) {
+    hittables_BVH.list_.clear();
+    hittables_BVH.unbounded_list_.clear();
+    hittables_BVH.tree_.clear();
+  } else {
+    hittables.list_.clear();
+  }
+}
 
 void RayTracer::addLight(Light *l) { lights.list.push_back(l); }
 
@@ -215,5 +257,6 @@ void RayTracer::_clear() {
     image_ = NULL;
   }
 }
+
 
 void RayTracer::_copy(const RayTracer &other) { image_ = other.image_; }

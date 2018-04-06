@@ -15,20 +15,24 @@ void printHelp(int argc, char *argv[]) {
   std::cout << "Usage: " << argv[0] << " [OPTION]...\n";
   std::cout << "Generates an image via ray tracing\n\n";
   std::cout << "List of options:\n";
-  std::cout << "    --help           show this help message\n";
-  std::cout << "-d, --default        use default parameters\n";
-  std::cout << "-p, --projection     set projection {persp|ortho}"
+  std::cout << "    --help                        show this help message\n";
+  std::cout << "-d, --default                     use default parameters\n";
+  std::cout << "-p, --projection [persp|ortho]    set projection"
                " (default: ortho)\n";
-  std::cout << "-a, --antialias      enable antialiasing and set"
+  std::cout << "-a, --antialias [factor]          enable antialiasing and set"
                " AA factor"
                " (default: no antialiasing)\n";
-  std::cout << "-o, --output         set output file"
+  std::cout << "-o, --output [filename]           set output file"
                " (default: output.png)\n";
-  std::cout << "-w, --width          set output image width in px"
+  std::cout << "-w, --width [pixels]              set output image width"
                " (default: 1000px)\n";
-  std::cout << "-h, --height         set output image height in px"
+  std::cout << "-h, --height [pixels]             set output image height"
                " (default: 1000px)\n";
-  std::cout << "-m, --multithread    enable multithreading"
+  std::cout << "-m, --multithread                 enable multithreading"
+               " (default disabled)\n";
+  std::cout << "-b, --bvh                         enable bounding volume hierarchy"
+               " (default disabled)\n";
+  std::cout << "-g, --genspheres [number]         generate a cube of spheres"
                " (default disabled)\n";
   std::cout << "\nExamples:\n";
   std::cout << argv[0] << " -d\n";
@@ -48,6 +52,10 @@ int main(int argc, char *argv[]) {
   bool antialias = false;
   int aa_factor = 1;
   bool multithread = false;
+  bool BVH = false;
+
+  bool genspheres = false;
+  unsigned num_spheres = 0;
 
   // parse options
   if (argc == 1) {
@@ -65,10 +73,12 @@ int main(int argc, char *argv[]) {
         {"width", required_argument, 0, 'w'},
         {"height", required_argument, 0, 'h'},
         {"multithread", no_argument, 0, 'm'},
+        {"bvh", no_argument, 0, 'b'},
+        {"genspheres", required_argument, 0, 'g'},
         {0, 0, 0, 0}};
     int option_index = 0;
     int c =
-        getopt_long(argc, argv, "dp:a:o:w:h:m", long_options, &option_index);
+        getopt_long(argc, argv, "dp:a:o:w:h:mbg:", long_options, &option_index);
     if (c == -1) break;
     switch (c) {
       case 0:
@@ -112,6 +122,13 @@ int main(int argc, char *argv[]) {
       case 'm':
         multithread = true;
         break;
+      case 'b':
+        BVH = true;
+        break;
+      case 'g':
+        genspheres = true;
+        num_spheres = std::stoi(optarg);
+        break;
       case '?':
         return 1;
       default:
@@ -127,6 +144,7 @@ int main(int argc, char *argv[]) {
   r.aa_factor_ = aa_factor;
   r.ortho = ortho;
   r.multithread = multithread;
+  r.BVH = BVH;
 
   // Lights
   AmbientLight l1;
@@ -141,50 +159,53 @@ int main(int argc, char *argv[]) {
 
   std::vector<Sphere> spheres;
 
-  int num_spheres = 1<<20;
-  float sphere_radius = 0.005f;
-  srand(100);
-  for (int i = 0; i < num_spheres; i++) {
-    float LO = -1.0f;
-    float HI = 1.0f;
-    float x = LO + static_cast<float>(rand()) /
-                       (static_cast<float>(RAND_MAX / (HI - LO)));
-    float y = LO + static_cast<float>(rand()) /
-                       (static_cast<float>(RAND_MAX / (HI - LO)));
-    float z = LO + static_cast<float>(rand()) /
-                       (static_cast<float>(RAND_MAX / (HI - LO)));
-    Sphere s(vec3(1.77f * x, y, z - 3), sphere_radius);
-    LO = 0.2f;
-    HI = 1.0f;
-    float r = LO + static_cast<float>(rand()) /
-                       (static_cast<float>(RAND_MAX / (HI - LO)));
-    float g = LO + static_cast<float>(rand()) /
-                       (static_cast<float>(RAND_MAX / (HI - LO)));
-    float b = LO + static_cast<float>(rand()) /
-                       (static_cast<float>(RAND_MAX / (HI - LO)));
-    s.ka = vec3(r, g, b);
-    s.kd = s.ka;
-    s.alpha = 3;
-    s.ks = 0.5f * vec3(1, 1, 1);
-    spheres.push_back(s);
-  }
+  if (genspheres) {
+    float sphere_radius = 0.01f;
+    srand(100);
+    for (unsigned i = 0; i < num_spheres; i++) {
+      float LO = -1.0f;
+      float HI = 1.0f;
+      float x = LO + static_cast<float>(rand()) /
+        (static_cast<float>(RAND_MAX / (HI - LO)));
+      float y = LO + static_cast<float>(rand()) /
+        (static_cast<float>(RAND_MAX / (HI - LO)));
+      float z = LO + static_cast<float>(rand()) /
+        (static_cast<float>(RAND_MAX / (HI - LO)));
+      Sphere s(vec3(x, y, z - 3), sphere_radius);
+      LO = 0.2f;
+      HI = 1.0f;
+      float r = LO + static_cast<float>(rand()) /
+        (static_cast<float>(RAND_MAX / (HI - LO)));
+      float g = LO + static_cast<float>(rand()) /
+        (static_cast<float>(RAND_MAX / (HI - LO)));
+      float b = LO + static_cast<float>(rand()) /
+        (static_cast<float>(RAND_MAX / (HI - LO)));
+      s.ka = vec3(r, g, b);
+      s.kd = s.ka;
+      s.alpha = 3;
+      s.ks = 0.5f * vec3(1, 1, 1);
+      spheres.push_back(s);
+    }
 
-  for (auto &s : spheres) {
-    r.addHittable(&s);
+    for (auto &s : spheres) {
+      r.addHittable(&s);
+    }
   }
 
   // Planes
-  CheckerPlane p1(vec3(0, -1.2, -2), normalize(vec3(0, 1, 0)));
-  p1.ka1 = vec3(0.9, 0.9, 0.9);
-  p1.ka2 = vec3(0.1, 0.1, 0.1);
-  p1.kd1 = p1.ka1;
-  p1.kd2 = p1.ka2;
-  p1.ks1 = vec3(0.1, 0.1, 0.1);
-  p1.ks2 = p1.ks1;
-  p1.alpha1 = 3;
-  p1.alpha2 = 3;
-  p1.tile_size = 0.2;
-  r.addHittable(&p1);
+  if (false) {
+    CheckerPlane p1(vec3(0, -1.2, -2), normalize(vec3(0, 1, 0)));
+    p1.ka1 = vec3(0.9, 0.9, 0.9);
+    p1.ka2 = vec3(0.1, 0.1, 0.1);
+    p1.kd1 = p1.ka1;
+    p1.kd2 = p1.ka2;
+    p1.ks1 = vec3(0.1, 0.1, 0.1);
+    p1.ks2 = p1.ks1;
+    p1.alpha1 = 3;
+    p1.alpha2 = 3;
+    p1.tile_size = 0.2;
+    r.addHittable(&p1);
+  }
 
   // render and write image to file
   r.render();
