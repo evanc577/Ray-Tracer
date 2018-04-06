@@ -141,37 +141,32 @@ int main(int argc, char *argv[]) {
 
   std::vector<Sphere> spheres;
 
-  int x_max = 64;
-  int y_max = 64;
-  int z_max = 64;
+  int num_spheres = 1<<20;
+  float sphere_radius = 0.005f;
   srand(100);
-  for (int i = 0; i < x_max; i++) {
-    for (int j = 0; j < y_max; j++) {
-      for (int k = 0; k < z_max; k++) {
-        float LO = -1.0f;
-        float HI = 1.0f;
-        float x = LO + static_cast<float>(rand()) /
-                            (static_cast<float>(RAND_MAX / (HI - LO)));
-        float y = LO + static_cast<float>(rand()) /
-                            (static_cast<float>(RAND_MAX / (HI - LO)));
-        float z = LO + static_cast<float>(rand()) /
-                            (static_cast<float>(RAND_MAX / (HI - LO)));
-        Sphere s(vec3(1.77f*x, y, z - 3), 0.005);
-        LO = 0.2f;
-        HI = 1.0f;
-        float r = LO + static_cast<float>(rand()) /
-                            (static_cast<float>(RAND_MAX / (HI - LO)));
-        float g = LO + static_cast<float>(rand()) /
-                            (static_cast<float>(RAND_MAX / (HI - LO)));
-        float b = LO + static_cast<float>(rand()) /
-                            (static_cast<float>(RAND_MAX / (HI - LO)));
-        s.ka = vec3(r, g, b);
-        s.kd = s.ka;
-        s.alpha = 3;
-        s.ks = 0.5f * vec3(1, 1, 1);
-        spheres.push_back(s);
-      }
-    }
+  for (int i = 0; i < num_spheres; i++) {
+    float LO = -1.0f;
+    float HI = 1.0f;
+    float x = LO + static_cast<float>(rand()) /
+                       (static_cast<float>(RAND_MAX / (HI - LO)));
+    float y = LO + static_cast<float>(rand()) /
+                       (static_cast<float>(RAND_MAX / (HI - LO)));
+    float z = LO + static_cast<float>(rand()) /
+                       (static_cast<float>(RAND_MAX / (HI - LO)));
+    Sphere s(vec3(1.77f * x, y, z - 3), sphere_radius);
+    LO = 0.2f;
+    HI = 1.0f;
+    float r = LO + static_cast<float>(rand()) /
+                       (static_cast<float>(RAND_MAX / (HI - LO)));
+    float g = LO + static_cast<float>(rand()) /
+                       (static_cast<float>(RAND_MAX / (HI - LO)));
+    float b = LO + static_cast<float>(rand()) /
+                       (static_cast<float>(RAND_MAX / (HI - LO)));
+    s.ka = vec3(r, g, b);
+    s.kd = s.ka;
+    s.alpha = 3;
+    s.ks = 0.5f * vec3(1, 1, 1);
+    spheres.push_back(s);
   }
 
   for (auto &s : spheres) {

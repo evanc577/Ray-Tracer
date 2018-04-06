@@ -25,8 +25,6 @@ class AABB : public Hittable {
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
-  virtual vec3 color(hit_record &rec, Light &l, const vec3 &d);
-
   virtual void add_hittable(Hittable* h);
 
   virtual void generate();
