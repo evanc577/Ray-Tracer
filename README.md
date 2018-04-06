@@ -1,4 +1,4 @@
-# MP2 --- Basic Ray Tracer with BVH
+# Basic Ray Tracer
 
 Objects:
 
@@ -40,7 +40,7 @@ Other Goodies:
 
 * Anti-aliasing support (arbitrary positive integers)
 
-* Multithread support
+* Multithreading support
 
 * Specify output file
 
