@@ -5,7 +5,6 @@ inline float ffmax(float a, float b) { return a > b ? a : b; }
 inline float ffmax(float a, float b, float c) { return ffmax(ffmax(a, b), c); }
 inline float ffmin(float a, float b, float c) { return ffmin(ffmin(a, b), c); }
 
-
 AABB::AABB() { max_val = 1; }
 
 void AABB::add_hittable(Hittable* h) {
@@ -34,11 +33,14 @@ void AABB::generate() {
     int d = std::get<2>(stk.top());
     stk.pop();
 
-    // sort section of temp vector with respect to dimension d
-    std::sort(temp_vector.begin() + left, temp_vector.begin() + right,
-              [&](Hittable* a, Hittable* b) {
-                return a->get_center()[d] < b->get_center()[d];
-              });
+    // partition section of temp vector with respect to dimension d around
+    // median
+    std::nth_element(temp_vector.begin() + left,
+                     temp_vector.begin() + (right - left) / 2 + left,
+                     temp_vector.begin() + right,
+                     [&](Hittable* a, Hittable* b) {
+                       return a->get_center()[d] < b->get_center()[d];
+                     });
 
     // calculate bounding box
     std::tuple<vec3, vec3> b = temp_vector[left]->get_bounds();
@@ -99,13 +101,12 @@ bool AABB::intersects_BB(const Ray& r, int index, int t_min, int t_max) const {
   const vec3& lower = std::get<0>(bounds);
   const vec3& upper = std::get<1>(bounds);
 
-
-  float tx1 = (lower[0] - r.origin()[0])/r.direction()[0];
-  float tx2 = (upper[0] - r.origin()[0])/r.direction()[0];
-  float ty1 = (lower[1] - r.origin()[1])/r.direction()[1];
-  float ty2 = (upper[1] - r.origin()[1])/r.direction()[1];
-  float tz1 = (lower[2] - r.origin()[2])/r.direction()[2];
-  float tz2 = (upper[2] - r.origin()[2])/r.direction()[2];
+  float tx1 = (lower[0] - r.origin()[0]) / r.direction()[0];
+  float tx2 = (upper[0] - r.origin()[0]) / r.direction()[0];
+  float ty1 = (lower[1] - r.origin()[1]) / r.direction()[1];
+  float ty2 = (upper[1] - r.origin()[1]) / r.direction()[1];
+  float tz1 = (lower[2] - r.origin()[2]) / r.direction()[2];
+  float tz2 = (upper[2] - r.origin()[2]) / r.direction()[2];
 
   t_min = ffmax(ffmin(tx1, tx2), ffmin(ty1, ty2), ffmin(tz1, tz2));
   t_max = ffmin(ffmax(tx1, tx2), ffmax(ty1, ty2), ffmax(tz1, tz2));

@@ -37,9 +37,9 @@ RayTracer &RayTracer::operator=(const RayTracer &other) {
 }
 
 void RayTracer::outputImage(std::string filename) const {
-  std::cout << "writing to " << filename << "...\n";
+  std::cout << "writing to " << filename << "..." << std::endl;
   if (!image_) {
-    std::cout << __FUNCTION__ << "() error, no image\n";
+    std::cout << __FUNCTION__ << "() error, no image" << std::endl;
     return;
   }
 
@@ -62,7 +62,7 @@ void RayTracer::outputImage(std::string filename) const {
       std::chrono::high_resolution_clock::now();
   auto duration =
       std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-  std::cout << "done, took " << duration << "ms\n";
+  std::cout << "done, took " << duration << "ms" << std::endl;
 }
 
 void RayTracer::setImageSize(unsigned w, unsigned h) {
@@ -83,7 +83,7 @@ void RayTracer::renderSection(int thread, int num_threads) {
 
   if (aa_factor_ < 1) {
     std::cout << "invalid antialias factor,"
-                 " disabling antialiasing\n";
+                 " disabling antialiasing" << std::endl;
     antialias_ = false;
   }
 
@@ -142,17 +142,30 @@ void RayTracer::renderSection(int thread, int num_threads) {
 }
 
 void RayTracer::render() {
-  std::cout << "rendering image...\n";
   if (!image_) {
-    std::cout << __FUNCTION__ << "() error, image size not set\n";
+    std::cout << __FUNCTION__ << "() error, image size not set" << std::endl;
     return;
   }
 
   if (BVH) {
+    std::cout << "generating BVH..." << std::endl;
+    // time start
+    std::chrono::high_resolution_clock::time_point t1 =
+      std::chrono::high_resolution_clock::now();
+
     hittables_BVH.generate();
+
+    // time end
+    std::chrono::high_resolution_clock::time_point t2 =
+      std::chrono::high_resolution_clock::now();
+    auto duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+    std::cout << "done, took " << duration << "ms" << std::endl;
   } else {
     hittables.generate();
   }
+
+  std::cout << "rendering image..." << std::endl;
 
   // time start
   std::chrono::high_resolution_clock::time_point t1 =
@@ -211,7 +224,7 @@ void RayTracer::render() {
       std::chrono::high_resolution_clock::now();
   auto duration =
       std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-  std::cout << "done, took " << duration << "ms\n";
+  std::cout << "done, took " << duration << "ms" << std::endl;
 }
 
 vec3 RayTracer::color(const Ray &r) {

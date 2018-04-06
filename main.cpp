@@ -30,10 +30,12 @@ void printHelp(int argc, char *argv[]) {
                " (default: 1000px)\n";
   std::cout << "-m, --multithread                 enable multithreading"
                " (default disabled)\n";
-  std::cout << "-b, --bvh                         enable bounding volume hierarchy"
-               " (default disabled)\n";
+  std::cout << "-b, --bvh                         enable bounding volume"
+               " hierarchy (default disabled)\n";
   std::cout << "-g, --genspheres [number]         generate a cube of spheres"
                " (default disabled)\n";
+  std::cout << "-r, --radius [float]              radius of spheres"
+               " (default 0.01) (to be used with --genspheres)\n";
   std::cout << "\nExamples:\n";
   std::cout << argv[0] << " -d\n";
   std::cout << argv[0] << " -w 200 -h 200\n";
@@ -56,6 +58,7 @@ int main(int argc, char *argv[]) {
 
   bool genspheres = false;
   unsigned num_spheres = 0;
+  float sphere_radius = 0.01f;
 
   // parse options
   if (argc == 1) {
@@ -75,10 +78,11 @@ int main(int argc, char *argv[]) {
         {"multithread", no_argument, 0, 'm'},
         {"bvh", no_argument, 0, 'b'},
         {"genspheres", required_argument, 0, 'g'},
+        {"radius", required_argument, 0, 'r'},
         {0, 0, 0, 0}};
     int option_index = 0;
     int c =
-        getopt_long(argc, argv, "dp:a:o:w:h:mbg:", long_options, &option_index);
+        getopt_long(argc, argv, "dp:a:o:w:h:mbg:r:", long_options, &option_index);
     if (c == -1) break;
     switch (c) {
       case 0:
@@ -129,6 +133,9 @@ int main(int argc, char *argv[]) {
         genspheres = true;
         num_spheres = std::stoi(optarg);
         break;
+      case 'r':
+        sphere_radius = std::stof(optarg);
+        break;
       case '?':
         return 1;
       default:
@@ -160,7 +167,6 @@ int main(int argc, char *argv[]) {
   std::vector<Sphere> spheres;
 
   if (genspheres) {
-    float sphere_radius = 0.01f;
     srand(100);
     for (unsigned i = 0; i < num_spheres; i++) {
       float LO = -1.0f;
