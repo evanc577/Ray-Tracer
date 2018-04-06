@@ -54,6 +54,10 @@ Orthographic image
 
 ![Orthographic Image](images/orthographic.png)
 
-Bounded Volume Hierarchy test with 2^18 spheres
+Bounding Volume Hierarchy test with 2^18 spheres
 
 ![BVH Image](images/bvh.png)
+
+Bounding Volume Hierarchy scalability
+
+![BVH Scalability](images/bvh_chart.png)
