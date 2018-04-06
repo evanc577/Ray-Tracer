@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
 
   if (genspheres) {
     srand(100);
-    for (unsigned i = 0; i < num_spheres; i++) {
+    for (unsigned i = 0; i < num_spheres; ++i) {
       float LO = -1.0f;
       float HI = 1.0f;
       float x = LO + static_cast<float>(rand()) /

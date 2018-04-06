@@ -145,7 +145,7 @@ bool AABB::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
       }
     }
   }
-  for (unsigned long i = 0; i < unbounded_list_.size(); i++) {
+  for (unsigned long i = 0; i < unbounded_list_.size(); ++i) {
     if (unbounded_list_[i]->hit(r, t_min, closest, temp, l)) {
       hit = true;
       closest = temp.t;

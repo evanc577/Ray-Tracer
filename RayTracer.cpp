@@ -87,8 +87,8 @@ void RayTracer::renderSection(int thread, int num_threads) {
     antialias_ = false;
   }
 
-  for (int j = 0; j < image_->height_; j++) {
-    for (int i = 0; i < image_->width_; i++) {
+  for (int j = 0; j < image_->height_; ++j) {
+    for (int i = 0; i < image_->width_; ++i) {
       if ((i + j) % num_threads != thread) continue;
 
       float u = float(i) / float(image_->width_);
@@ -114,7 +114,7 @@ void RayTracer::renderSection(int thread, int num_threads) {
       // if antialiasing is enabled
       else {
         vec3 col(0, 0, 0);
-        for (int k = 0; k < aa_factor_; k++) {
+        for (int k = 0; k < aa_factor_; ++k) {
           float range_begin = float(k) / float(aa_factor_);
           float range_end = float(k + 1) / float(aa_factor_);
           std::uniform_real_distribution<float> dist(range_begin, range_end);
@@ -179,7 +179,7 @@ void RayTracer::render() {
     int thread = 0;
     for (auto& t : threads) {
       t = std::thread([=] { renderSection(thread, num_threads); });
-      thread++;
+      ++thread;
     }
     for (auto& t : threads) {
       t.join();
@@ -196,24 +196,24 @@ void RayTracer::render() {
   if (BVH) {
     float A = pow(hittables_BVH.max_val, -gamma);
     if (hittables_BVH.max_val > 1) {
-      for (int i = 0; i < image_->width_; i++) {
-        for (int j = 0; j < image_->height_; j++) {
+      for (int i = 0; i < image_->width_; ++i) {
+        for (int j = 0; j < image_->height_; ++j) {
           vec3 &p = image_->getPixel(i, j);
-          for (int k = 0; k < 3; k++) {
-            p[k] = A * pow(p[k], gamma);
-          }
+          p[0] = A * pow(p[0], gamma);
+          p[1] = A * pow(p[1], gamma);
+          p[2] = A * pow(p[2], gamma);
         }
       }
     }
   } else {
-    float A = pow(hittables.max_val, -gamma);
-    if (hittables.max_val > 1) {
-      for (int i = 0; i < image_->width_; i++) {
-        for (int j = 0; j < image_->height_; j++) {
+    float A = pow(hittables_BVH.max_val, -gamma);
+    if (hittables_BVH.max_val > 1) {
+      for (int i = 0; i < image_->width_; ++i) {
+        for (int j = 0; j < image_->height_; ++j) {
           vec3 &p = image_->getPixel(i, j);
-          for (int k = 0; k < 3; k++) {
-            p[k] = A * pow(p[k], gamma);
-          }
+          p[0] = A * pow(p[0], gamma);
+          p[1] = A * pow(p[1], gamma);
+          p[2] = A * pow(p[2], gamma);
         }
       }
     }
