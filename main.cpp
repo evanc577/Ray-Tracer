@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
         (static_cast<float>(RAND_MAX / (HI - LO)));
       float z = LO + static_cast<float>(rand()) /
         (static_cast<float>(RAND_MAX / (HI - LO)));
-      Sphere s(vec3(x, y, z - 3), sphere_radius);
+      Sphere s(vec3(x, y, z), sphere_radius);
       LO = 0.2f;
       HI = 1.0f;
       float r = LO + static_cast<float>(rand()) /
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
 
   // Planes
   if (false) {
-    CheckerPlane p1(vec3(0, -1.2, -2), normalize(vec3(0, 1, 0)));
+    CheckerPlane p1(vec3(0, -1.5, 0), normalize(vec3(0, 1, 0)));
     p1.ka1 = vec3(0.9, 0.9, 0.9);
     p1.ka2 = vec3(0.1, 0.1, 0.1);
     p1.kd1 = p1.ka1;
@@ -209,9 +209,16 @@ int main(int argc, char *argv[]) {
     p1.ks2 = p1.ks1;
     p1.alpha1 = 3;
     p1.alpha2 = 3;
-    p1.tile_size = 0.2;
+    p1.tile_size = 1.5;
     r.addHittable(&p1);
   }
+
+  // set cameras
+  float w = 1;
+  float h = height/width;
+  r.set_persp_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), (float)w / h,
+                   70);
+  r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
 
   // render and write image to file
   r.render();

@@ -71,19 +71,10 @@ void RayTracer::setImageSize(unsigned w, unsigned h) {
 }
 
 void RayTracer::renderSection(int thread, int num_threads) {
-  float left = -1;
-  float lower = -1 * float(image_->height_) / float(image_->width_);
-
-  vec3 corner(left, lower, 0.0);
-  vec3 corner_persp(left, lower, -1.0);
-  vec3 horz(2.0, 0.0, 0.0);
-  vec3 vert(0.0, -2.0 * lower, 0.0);
-  vec3 origin(0.0, 0.0, 0.0);
-  vec3 orthoDirection = corner_persp - corner;
-
   if (aa_factor_ < 1) {
     std::cout << "invalid antialias factor,"
-                 " disabling antialiasing" << std::endl;
+                 " disabling antialiasing"
+              << std::endl;
     antialias_ = false;
   }
 
@@ -100,11 +91,9 @@ void RayTracer::renderSection(int thread, int num_threads) {
         float temp_u = u + 0.5 / float(image_->width_);
         float temp_v = v + 0.5 / float(image_->height_);
         if (ortho) {
-          r.setOrigin(corner + temp_u * horz + temp_v * vert);
-          r.setDirection(orthoDirection);
+          r = o_cam.get_ray(temp_u, temp_v);
         } else {
-          r.setOrigin(origin);
-          r.setDirection(corner_persp + temp_u * horz + temp_v * vert);
+          r = p_cam.get_ray(temp_u, temp_v);
         }
         vec3 col = color(r);
         vec3 &pix = image_->getPixel(i, j);
@@ -123,11 +112,9 @@ void RayTracer::renderSection(int thread, int num_threads) {
 
           Ray r;
           if (ortho) {
-            r.setOrigin(corner + temp_u * horz + temp_v * vert);
-            r.setDirection(orthoDirection);
+            r = o_cam.get_ray(temp_u, temp_v);
           } else {
-            r.setOrigin(origin);
-            r.setDirection(corner_persp + temp_u * horz + temp_v * vert);
+            r = p_cam.get_ray(temp_u, temp_v);
           }
 
           col += color(r);
@@ -151,15 +138,15 @@ void RayTracer::render() {
     std::cout << "generating BVH..." << std::endl;
     // time start
     std::chrono::high_resolution_clock::time_point t1 =
-      std::chrono::high_resolution_clock::now();
+        std::chrono::high_resolution_clock::now();
 
     hittables_BVH.generate();
 
     // time end
     std::chrono::high_resolution_clock::time_point t2 =
-      std::chrono::high_resolution_clock::now();
+        std::chrono::high_resolution_clock::now();
     auto duration =
-      std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+        std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
     std::cout << "done, took " << duration << "ms" << std::endl;
   } else {
     hittables.generate();
@@ -177,11 +164,11 @@ void RayTracer::render() {
     std::vector<std::thread> threads(num_threads);
 
     int thread = 0;
-    for (auto& t : threads) {
+    for (auto &t : threads) {
       t = std::thread([=] { renderSection(thread, num_threads); });
       ++thread;
     }
-    for (auto& t : threads) {
+    for (auto &t : threads) {
       t.join();
     }
   }
@@ -230,11 +217,12 @@ void RayTracer::render() {
 vec3 RayTracer::color(const Ray &r) {
   hit_record rec;
   if (BVH) {
-    if (hittables_BVH.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
+    if (hittables_BVH.hit(r, 0.0, std::numeric_limits<float>::max(), rec,
+                          lights)) {
       return hittables_BVH.color(rec, lights, r.direction());
     } else {
       return vec3(0, 0, 0);
-    } 
+    }
   } else {
     if (hittables.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
       return hittables.color(rec, lights, r.direction());
@@ -244,7 +232,7 @@ vec3 RayTracer::color(const Ray &r) {
   }
 }
 
-void RayTracer::addHittable(Hittable *h) { 
+void RayTracer::addHittable(Hittable *h) {
   if (BVH) {
     hittables_BVH.add_hittable(h);
   } else {
@@ -252,7 +240,7 @@ void RayTracer::addHittable(Hittable *h) {
   }
 }
 
-void RayTracer::clearHittables() { 
+void RayTracer::clearHittables() {
   if (BVH) {
     hittables_BVH.list_.clear();
     hittables_BVH.unbounded_list_.clear();
@@ -271,5 +259,14 @@ void RayTracer::_clear() {
   }
 }
 
-
 void RayTracer::_copy(const RayTracer &other) { image_ = other.image_; }
+
+void RayTracer::set_ortho_cam(vec3 origin, vec3 direction, vec3 vup,
+                              float width, float height) {
+  o_cam.set_camera(origin, direction, vup, width, height);
+}
+
+void RayTracer::set_persp_cam(vec3 origin, vec3 direction, vec3 vup,
+                              float aspect, float hfov) {
+  p_cam.set_camera(origin, direction, vup, aspect, hfov);
+}
