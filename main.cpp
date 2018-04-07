@@ -20,8 +20,8 @@ void printHelp(int argc, char *argv[]) {
   std::cout << "-p, --projection [persp|ortho]    set projection"
                " (default: ortho)\n";
   std::cout << "-a, --antialias [factor]          enable antialiasing and set"
-               " AA factor"
-               " (default: no antialiasing)\n";
+               " AA factor. Note # of samples is factor^2.\n"
+               "                                  (default: no antialiasing)\n";
   std::cout << "-o, --output [filename]           set output file"
                " (default: output.png)\n";
   std::cout << "-w, --width [pixels]              set output image width"
@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Planes
-  if (false) {
+  if (true) {
     CheckerPlane p1(vec3(0, -1.5, 0), normalize(vec3(0, 1, 0)));
     p1.ka1 = vec3(0.9, 0.9, 0.9);
     p1.ka2 = vec3(0.1, 0.1, 0.1);

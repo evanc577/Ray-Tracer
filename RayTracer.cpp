@@ -124,22 +124,27 @@ void RayTracer::renderSection(int thread, int num_threads) {
       else {
         vec3 col(0, 0, 0);
         for (int k = 0; k < aa_factor_; ++k) {
-          float range_begin = float(k) / float(aa_factor_);
-          float range_end = float(k + 1) / float(aa_factor_);
-          std::uniform_real_distribution<float> dist(range_begin, range_end);
-          float temp_u = u + dist(generator) / float(image_->width_);
-          float temp_v = v + dist(generator) / float(image_->height_);
+          for (int l = 0; l < aa_factor_; ++l) {
+            float x_range_begin = float(k) / float(aa_factor_);
+            float x_range_end = float(k + 1) / float(aa_factor_);
+            float y_range_begin = float(l) / float(aa_factor_);
+            float y_range_end = float(l + 1) / float(aa_factor_);
+            std::uniform_real_distribution<float> x_dist(x_range_begin, x_range_end);
+            std::uniform_real_distribution<float> y_dist(y_range_begin, y_range_end);
+            float temp_u = u + x_dist(generator) / float(image_->width_);
+            float temp_v = v + y_dist(generator) / float(image_->height_);
 
-          Ray r;
-          if (ortho) {
-            r = o_cam.get_ray(temp_u, temp_v);
-          } else {
-            r = p_cam.get_ray(temp_u, temp_v);
+            Ray r;
+            if (ortho) {
+              r = o_cam.get_ray(temp_u, temp_v);
+            } else {
+              r = p_cam.get_ray(temp_u, temp_v);
+            }
+
+            col += color(r);
           }
-
-          col += color(r);
         }
-        float aa_float_ = float(aa_factor_);
+        float aa_float_ = float(aa_factor_*aa_factor_);
         col /= vec3(aa_float_, aa_float_, aa_float_);
         vec3 &pix = image_->getPixel(i, j);
         pix = col;
