@@ -9,11 +9,11 @@
 #include <string>
 #include <thread>
 #include "AABB.h"
-#include "OrthoCamera.h"
-#include "PerspCamera.h"
 #include "HittableList.h"
 #include "Image.h"
 #include "LightList.h"
+#include "OrthoCamera.h"
+#include "PerspCamera.h"
 #include "Ray.h"
 #include "vec3.h"
 
@@ -37,6 +37,11 @@ class RayTracer {
   void addLight(Light *l);
   void clearLights();
 
+  void set_ortho_cam(vec3 origin, vec3 direction, vec3 vup, float width,
+                     float height);
+  void set_persp_cam(vec3 origin, vec3 direction, vec3 vup, float aspect,
+                     float hfov);
+
   Image *image_;
   void render();
 
@@ -49,7 +54,8 @@ class RayTracer {
 
   bool BVH;
 
-  PerspCamera cam;
+  PerspCamera p_cam;
+  OrthoCamera o_cam;
 
  private:
   void _copy(const RayTracer &other);
@@ -62,7 +68,6 @@ class RayTracer {
 
   vec3 color(const Ray &r);
   vec3 randomInUnitSphere();
-
 
   HittableList hittables;
   AABB hittables_BVH;

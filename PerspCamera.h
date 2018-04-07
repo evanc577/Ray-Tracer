@@ -17,4 +17,5 @@ class PerspCamera : public Camera {
   vec3 horz;
   vec3 vert;
 };
+
 #endif

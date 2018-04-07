@@ -5,11 +5,15 @@
 
 class OrthoCamera : public Camera {
  public:
-   OrthoCamera(float center, float width);
-   virtual Ray get_ray(float u, float v) const;
+  OrthoCamera();
+  OrthoCamera(vec3 origin, vec3 direction, vec3 vup, float width, float height);
+  void set_camera(vec3 origin, vec3 direction, vec3 vup, float width,
+                  float height);
+  virtual Ray get_ray(float u, float v) const;
 
-   vec3 center;
-   vec3 width;
-   vec3 height;
+  vec3 direction;
+  vec3 lower_left;
+  vec3 horz;
+  vec3 vert;
 };
 #endif
