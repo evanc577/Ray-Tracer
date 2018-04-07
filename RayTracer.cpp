@@ -203,32 +203,23 @@ void RayTracer::render() {
 
   // scale values to avoid exceeding 1
   float gamma = 0.9f;
+  float max_val;
   if (BVH) {
-    float A = pow(hittables_BVH.max_val, -gamma);
-    if (hittables_BVH.max_val > 1) {
-      for (int i = 0; i < image_->width_; ++i) {
-        for (int j = 0; j < image_->height_; ++j) {
-          vec3 &p = image_->getPixel(i, j);
-          p[0] = A * pow(p[0], gamma);
-          p[1] = A * pow(p[1], gamma);
-          p[2] = A * pow(p[2], gamma);
-        }
-      }
-    }
+    max_val = hittables_BVH.max_val;
   } else {
-    float A = pow(hittables_BVH.max_val, -gamma);
-    if (hittables_BVH.max_val > 1) {
-      for (int i = 0; i < image_->width_; ++i) {
-        for (int j = 0; j < image_->height_; ++j) {
-          vec3 &p = image_->getPixel(i, j);
-          p[0] = A * pow(p[0], gamma);
-          p[1] = A * pow(p[1], gamma);
-          p[2] = A * pow(p[2], gamma);
-        }
+    max_val = hittables.max_val;
+  }
+  float A = pow(max_val, -gamma);
+  if (max_val > 1) {
+    for (int i = 0; i < image_->width_; ++i) {
+      for (int j = 0; j < image_->height_; ++j) {
+        vec3 &p = image_->getPixel(i, j);
+        p[0] = A * pow(p[0], gamma);
+        p[1] = A * pow(p[1], gamma);
+        p[2] = A * pow(p[2], gamma);
       }
     }
   }
-
   // time end
   std::chrono::high_resolution_clock::time_point t2 =
       std::chrono::high_resolution_clock::now();

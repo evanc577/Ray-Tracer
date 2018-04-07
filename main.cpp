@@ -155,11 +155,11 @@ int main(int argc, char *argv[]) {
 
   // Lights
   AmbientLight l1;
-  l1.ia = 0.4f * vec3(1, 1, 1);
+  l1.ia = 0.1f * vec3(1, 1, 1);
   r.addLight(&l1);
 
   DirectionalLight l2;
-  l2.direction = normalize(vec3(0.5, -1, -1));
+  l2.direction = normalize(vec3(-1, -1, 1));
   l2.id = 0.9f * vec3(1, 1, 1);
   l2.is = 0.9f * vec3(1, 1, 1);
   r.addLight(&l2);
