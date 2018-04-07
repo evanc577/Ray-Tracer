@@ -78,9 +78,29 @@ void RayTracer::renderSection(int thread, int num_threads) {
     antialias_ = false;
   }
 
+  // for progress indicator
+  int total_pixels;
+  int last_percentage;
+  if (thread == 0) {
+    total_pixels = image_->width_ * image_->height_;
+    last_percentage = -1;
+    std::ios::sync_with_stdio(false);
+  }
+
   for (int j = 0; j < image_->height_; ++j) {
     for (int i = 0; i < image_->width_; ++i) {
       if ((i + j) % num_threads != thread) continue;
+
+      // update progress percentage
+      if (thread == 0) {
+        int percentage = 100 * (float(j * image_->width_ + i) / total_pixels);
+        if (percentage > last_percentage) {
+          std::string str =
+              "rendering image..." + std::to_string(percentage) + "%\r";
+          std::cout << str << std::flush;
+          last_percentage = percentage;
+        }
+      }
 
       float u = float(i) / float(image_->width_);
       float v = float(j) / float(image_->height_);
@@ -126,6 +146,11 @@ void RayTracer::renderSection(int thread, int num_threads) {
       }
     }
   }
+  // finish progress indicator
+  if (thread == 0) {
+    std::cout << std::endl;
+    std::ios_base::sync_with_stdio();
+  }
 }
 
 void RayTracer::render() {
@@ -151,8 +176,6 @@ void RayTracer::render() {
   } else {
     hittables.generate();
   }
-
-  std::cout << "rendering image..." << std::endl;
 
   // time start
   std::chrono::high_resolution_clock::time_point t1 =
