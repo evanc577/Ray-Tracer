@@ -164,6 +164,18 @@ int main(int argc, char *argv[]) {
   l2.is = 0.9f * vec3(1, 1, 1);
   r.addLight(&l2);
 
+  // DirectionalLight l3;
+  // l3.direction = normalize(vec3(1, -1, 1));
+  // l3.id = 0.9f * vec3(1, 1, 1);
+  // l3.is = 0.9f * vec3(1, 1, 1);
+  // r.addLight(&l3);
+  
+  // PointLight l4;
+  // l4.point = vec3(0,0,0);
+  // l4.id = 1.0f * vec3(1, 1, 1);
+  // l4.is = l4.id;
+  // r.addLight(&l4);
+
   std::vector<Sphere> spheres;
 
   if (genspheres) {

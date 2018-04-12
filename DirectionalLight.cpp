@@ -20,3 +20,8 @@ bool DirectionalLight::AtPoint(const vec3 &p, std::vector<vec3> &ca,
   d.push_back(-1.0f * direction);
   return true;
 }
+
+float DirectionalLight::distance(const vec3& p) const {
+  (void)p;
+  return std::numeric_limits<float>::max();
+}

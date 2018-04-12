@@ -11,6 +11,8 @@ class Triangle : public Hittable {
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
+  virtual bool hit_one(const Ray &r, float t_min, float t_max) const;
+
   inline bool is_bounded() const;
 
   std::tuple<vec3, vec3> get_bounds() const;

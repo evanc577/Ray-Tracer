@@ -13,6 +13,8 @@ class LightList : public Light {
                        std::vector<vec3> &cd, std::vector<vec3> &cs,
                        std::vector<vec3> &d);
 
+  virtual float distance(const vec3 &p) const;
+
   std::vector<Light *> list;
 };
 

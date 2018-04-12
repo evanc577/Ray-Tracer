@@ -19,3 +19,9 @@ bool AmbientLight::AtPoint(const vec3 &p, std::vector<vec3> &ca,
   d.emplace_back(0, 0, 0);
   return true;
 }
+
+
+float AmbientLight::distance(const vec3 &p) const {
+  (void)p;
+  return std::numeric_limits<float>::max();
+}

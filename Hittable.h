@@ -1,6 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include <limits>
 #include <tuple>
 #include "Light.h"
 #include "Ray.h"
@@ -25,6 +26,8 @@ class Hittable {
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const = 0;
 
+  virtual bool hit_one(const Ray &r, float t_min, float t_max) const = 0;
+
   // returns a vector defining the color at the point defined in rec.
   // l is a light source, d is the direction from the camera to point
   virtual vec3 color(hit_record &rec, Light &l, const vec3 &d) {
@@ -33,7 +36,7 @@ class Hittable {
     std::vector<vec3> ca_list;
     std::vector<vec3> cd_list;
     std::vector<vec3> cs_list;
-    std::vector<vec3> light_d_list;
+    std::vector<vec3> light_d_list;  // vector pointing towards light source
     l.AtPoint(rec.p, ca_list, cd_list, cs_list, light_d_list);
 
     // Phong model values
@@ -63,6 +66,15 @@ class Hittable {
     // add diffuse term to d_list;
     for (int i = 0; i < size; i++) {
       pos_diffuse_list.emplace_back(false);
+
+      // test for shadows
+      hit_record shadow_rec;
+      Ray shadow_ray(rec.p, light_d_list[i]);
+      if (hit_one(shadow_ray, 0.0001f, l.distance(rec.p))) {
+        d_list.push_back(vec3(0,0,0));
+        continue;
+      }
+
       float dot_prod = dot(light_d_list[i], rec.normal);
       vec3 temp_diffuse;
       if (dot_prod < 0.0001f) {
@@ -129,7 +141,7 @@ class Hittable {
     return temp;
   }
 
-  virtual ~Hittable() {}
+  virtual ~Hittable() = default;
 
   vec3 ka = vec3(1, 1, 1);
   vec3 kd = vec3(1, 1, 1);
@@ -141,7 +153,7 @@ class Hittable {
 
   virtual std::tuple<vec3, vec3> get_bounds() const {
     return std::make_tuple(vec3(0, 0, 0), vec3(0, 0, 0));
-  };
+  }
   virtual vec3 get_center() const { return vec3(0, 0, 0); };
 };
 #endif

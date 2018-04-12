@@ -25,6 +25,8 @@ class AABB : public Hittable {
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
+  virtual bool hit_one(const Ray &r, float t_min, float t_max) const;
+
   virtual void add_hittable(Hittable* h);
 
   virtual void generate();

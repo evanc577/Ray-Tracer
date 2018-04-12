@@ -2,6 +2,7 @@
 #define LIGHT_H
 
 #include <vector>
+#include <limits>
 #include "vec3.h"
 
 class Light {
@@ -19,6 +20,8 @@ class Light {
   virtual bool AtPoint(const vec3 &p, std::vector<vec3> &ca,
                        std::vector<vec3> &cd, std::vector<vec3> &cs,
                        std::vector<vec3> &d) = 0;
+
+  virtual float distance(const vec3 &p) const = 0;
 };
 
 #endif

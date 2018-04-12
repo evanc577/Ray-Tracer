@@ -32,3 +32,13 @@ bool HittableList::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
   }
   return hit;
 }
+
+bool HittableList::hit_one(const Ray &r, float t_min, float t_max) const {
+  float closest = t_max;
+  for (unsigned long i = 0; i < list_.size(); i++) {
+    if (list_[i]->hit_one(r, t_min, closest)) {
+      return true;
+    }
+  }
+  return false;
+}

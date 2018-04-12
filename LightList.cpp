@@ -27,3 +27,16 @@ bool LightList::AtPoint(const vec3 &p, std::vector<vec3> &ca,
   }
   return directional;
 }
+
+
+float LightList::distance(const vec3 &p) const {
+  float distance = std::numeric_limits<float>::max();
+  for (const auto& l : list) {
+    float new_distance = l->distance(p);
+    if (new_distance < distance) {
+
+      distance = new_distance;
+    }
+  }
+  return distance;
+}

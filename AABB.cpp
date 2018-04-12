@@ -154,3 +154,27 @@ bool AABB::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
   }
   return hit;
 }
+
+bool AABB::hit_one(const Ray& r, float t_min, float t_max) const {
+  float closest = t_max;
+  std::stack<int> stk;
+  stk.push(0);
+  while (!tree_.empty() && !stk.empty()) {
+    int i = stk.top();
+    stk.pop();
+    if (intersects_BB(r, i, t_min, t_max)) {
+      if (tree_[i].offset == 0) {
+        if (tree_[i].item->hit_one(r, t_min, closest)) return true;
+      } else {
+        stk.push(i + tree_[i].offset);
+        stk.push(i + 1);
+      }
+    }
+  }
+  for (unsigned long i = 0; i < unbounded_list_.size(); ++i) {
+    if (unbounded_list_[i]->hit_one(r, t_min, closest)) {
+      return true;
+    }
+  }
+  return false;
+}

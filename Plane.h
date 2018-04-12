@@ -13,6 +13,8 @@ class Plane : public Hittable {
   virtual bool hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const;
 
+  virtual bool hit_one(const Ray &r, float t_min, float t_max) const;
+
   std::tuple<vec3, vec3> get_bounds() const {
     return std::make_tuple(vec3(0,0,0), vec3(0,0,0));
   }

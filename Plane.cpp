@@ -24,3 +24,14 @@ bool Plane::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
   }
   return false;
 }
+
+bool Plane::hit_one(const Ray &r, float t_min, float t_max) const {
+  float temp = dot(normal, r.direction());
+  if (temp > 0.0001f || temp < -0.0001f) {
+    float t = dot((point - r.origin()), normal) / temp;
+    if (t < t_max && t > t_min) {
+      return true;
+    }
+  }
+  return false;
+}

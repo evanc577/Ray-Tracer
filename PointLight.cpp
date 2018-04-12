@@ -18,3 +18,7 @@ bool PointLight::AtPoint(const vec3 &p, std::vector<vec3> &ca,
   d.push_back(normalize(point - p));
   return true;
 }
+
+float PointLight::distance(const vec3 &p) const {
+  return (p - point).length();
+}
