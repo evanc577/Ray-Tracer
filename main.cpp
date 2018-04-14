@@ -181,8 +181,8 @@ int main(int argc, char *argv[]) {
   if (genspheres) {
     srand(100);
     for (unsigned i = 0; i < num_spheres; ++i) {
-      float LO = -1.0f;
-      float HI = 1.0f;
+      float LO = -1.0f + sphere_radius;
+      float HI = 1.0f + sphere_radius;
       float x = LO + static_cast<float>(rand()) /
         (static_cast<float>(RAND_MAX / (HI - LO)));
       float y = LO + static_cast<float>(rand()) /
@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
 
   // Planes
   if (true) {
-    CheckerPlane p1(vec3(0, -1.5, 0), normalize(vec3(0, 1, 0)));
+    CheckerPlane p1(vec3(0, -1, 0), normalize(vec3(0, 1, 0)));
     p1.ka1 = vec3(0.9, 0.9, 0.9);
     p1.ka2 = vec3(0.1, 0.1, 0.1);
     p1.kd1 = p1.ka1;
