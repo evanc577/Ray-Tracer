@@ -2,8 +2,6 @@
 
 inline float ffmin(float a, float b) { return a < b ? a : b; }
 inline float ffmax(float a, float b) { return a > b ? a : b; }
-inline float ffmax(float a, float b, float c) { return ffmax(ffmax(a, b), c); }
-inline float ffmin(float a, float b, float c) { return ffmin(ffmin(a, b), c); }
 
 AABB::AABB() { max_val = 1; }
 
@@ -96,30 +94,26 @@ void AABB::generate() {
   }
 }
 
-bool AABB::intersects_BB(const Ray& r, int index, int t_min, int t_max) const {
+bool AABB::intersects_BB(const Ray& r, int index) const {
   const std::tuple<vec3, vec3>& bounds = tree_[index].bounds;
   const vec3& lower = std::get<0>(bounds);
   const vec3& upper = std::get<1>(bounds);
 
-  float tx1 = (lower[0] - r.origin()[0]) / r.direction()[0];
-  float tx2 = (upper[0] - r.origin()[0]) / r.direction()[0];
-  float ty1 = (lower[1] - r.origin()[1]) / r.direction()[1];
-  float ty2 = (upper[1] - r.origin()[1]) / r.direction()[1];
-  float tz1 = (lower[2] - r.origin()[2]) / r.direction()[2];
-  float tz2 = (upper[2] - r.origin()[2]) / r.direction()[2];
+  float t1 = (lower[0] - r.origin()[0]) * r.inv_direction()[0];
+  float t2 = (upper[0] - r.origin()[0]) * r.inv_direction()[0];
 
-  t_min = ffmax(ffmin(tx1, tx2), ffmin(ty1, ty2), ffmin(tz1, tz2));
-  t_max = ffmin(ffmax(tx1, tx2), ffmax(ty1, ty2), ffmax(tz1, tz2));
+  float tmin = ffmin(t1, t2);
+  float tmax = ffmax(t1, t2);
 
-  if (t_max < 0) {
-    return false;
+  for (int i = 0; i < 3; ++i) {
+    t1 = (lower[i] - r.origin()[i]) * r.inv_direction()[i];
+    t2 = (upper[i] - r.origin()[i]) * r.inv_direction()[i];
+
+    tmin = ffmax(tmin, ffmin(t1, t2));
+    tmax = ffmin(tmax, ffmax(t1, t2));
   }
 
-  if (t_min > t_max) {
-    return false;
-  }
-
-  return true;
+  return tmax > ffmax(tmin, 0.0);
 }
 
 bool AABB::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
@@ -132,7 +126,7 @@ bool AABB::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
   while (!tree_.empty() && !stk.empty()) {
     int i = stk.top();
     stk.pop();
-    if (intersects_BB(r, i, t_min, t_max)) {
+    if (intersects_BB(r, i)) {
       if (tree_[i].offset == 0) {
         if (tree_[i].item->hit(r, t_min, closest, temp, l)) {
           hit = true;
@@ -162,7 +156,7 @@ bool AABB::hit_one(const Ray& r, float t_min, float t_max) const {
   while (!tree_.empty() && !stk.empty()) {
     int i = stk.top();
     stk.pop();
-    if (intersects_BB(r, i, t_min, t_max)) {
+    if (intersects_BB(r, i)) {
       if (tree_[i].offset == 0) {
         if (tree_[i].item->hit_one(r, t_min, closest)) return true;
       } else {

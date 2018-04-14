@@ -232,6 +232,8 @@ int main(int argc, char *argv[]) {
                    70);
   r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
 
+  // r.read_file("test.obj");
+
   // render and write image to file
   r.render();
   r.outputImage(filename);

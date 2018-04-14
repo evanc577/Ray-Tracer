@@ -111,9 +111,6 @@ class Hittable {
         specular = rec.ks *
                    float((pow(-1.0f * dot(r_list[i], temp_d), rec.alpha))) *
                    cs_list[i];
-        if (isnan(specular[0]) || isnan(specular[1]) || isnan(specular[2])) {
-          specular = vec3(0, 0, 0);
-        }
         if (specular[0] < 0) specular[0] = 0;
         if (specular[1] < 0) specular[1] = 0;
         if (specular[2] < 0) specular[2] = 0;

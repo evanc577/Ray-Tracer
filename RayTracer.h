@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <limits>
 #include <png++/png.hpp>
 #include <random>
@@ -41,6 +42,8 @@ class RayTracer {
                      float height);
   void set_persp_cam(vec3 origin, vec3 direction, vec3 vup, float aspect,
                      float hfov);
+
+  void read_file(std::string filename);
 
   Image *image_;
   void render();

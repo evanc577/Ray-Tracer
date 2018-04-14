@@ -289,3 +289,13 @@ void RayTracer::set_persp_cam(vec3 origin, vec3 direction, vec3 vup,
                               float aspect, float hfov) {
   p_cam.set_camera(origin, direction, vup, aspect, hfov);
 }
+
+void RayTracer::read_file(std::string filename) {
+  std::ifstream infile;
+  infile.open(filename);
+  std::string line;
+  
+  while (std::getline(infile, line)) {
+    std::cout << line << std::endl;
+  }
+}

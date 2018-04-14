@@ -44,7 +44,7 @@ class AABB : public Hittable {
  private:
   int partition(std::vector<Hittable*>& l, int left, int right, int pivot_index) const;
   void swap(Hittable*& a, Hittable*& b) const;
-  bool intersects_BB(const Ray &r, int index, int t_min, int t_max) const;
+  inline bool intersects_BB(const Ray &r, int index) const;
 };
 
 #endif
