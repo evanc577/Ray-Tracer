@@ -60,6 +60,6 @@ Scenes with many objects can be accelerated with a BVH
 
 ![BVH Scalability](images/bvh_chart.png)
 
-Test with 2^18 spheres
+Test with 2^24 spheres
 
 ![BVH Image](images/bvh.png)
