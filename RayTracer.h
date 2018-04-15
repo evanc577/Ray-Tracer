@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <limits>
 #include <png++/png.hpp>
 #include <random>
@@ -16,6 +17,8 @@
 #include "OrthoCamera.h"
 #include "PerspCamera.h"
 #include "Ray.h"
+#include "Triangle.h"
+#include "Sphere.h"
 #include "vec3.h"
 
 class RayTracer {
@@ -43,7 +46,7 @@ class RayTracer {
   void set_persp_cam(vec3 origin, vec3 direction, vec3 vup, float aspect,
                      float hfov);
 
-  void read_file(std::string filename);
+  void read_file(const std::string& filename);
 
   Image *image_;
   void render();
@@ -76,6 +79,8 @@ class RayTracer {
   AABB hittables_BVH;
 
   LightList lights;
+
+  std::vector<Triangle>* triangles;
 
   std::default_random_engine generator;
 };

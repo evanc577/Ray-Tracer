@@ -1,16 +1,9 @@
 #include "Triangle.h"
 
-inline float ffmin(float a, float b, float c) {
-  if (a < b && a < c) return a;
-  if (b < a && b < c) return b;
-  return c;
-}
-
-inline float ffmax(float a, float b, float c) {
-  if (a > b && a > c) return a;
-  if (b > a && b > c) return b;
-  return c;
-}
+inline float ffmin(float a, float b) { return a < b ? a : b; }
+inline float ffmax(float a, float b) { return a > b ? a : b; }
+inline float ffmax(float a, float b, float c) { return ffmax(ffmax(a, b), c); }
+inline float ffmin(float a, float b, float c) { return ffmin(ffmin(a, b), c); }
 
 Triangle::Triangle() : A(vec3(0, 0, 0)), B(vec3(0, 0, 0)), C(vec3(0, 0, 0)) {}
 
@@ -27,7 +20,8 @@ std::tuple<vec3, vec3> Triangle::get_bounds() const {
 }
 
 inline vec3 Triangle::get_center() const {
-  return vec3((A[0]+B[0]+C[0])/3, (A[1]+B[1]+C[1])/3, (A[2]+B[2]+C[2])/3);
+  return vec3((A[0] + B[0] + C[0]) / 3, (A[1] + B[1] + C[1]) / 3,
+              (A[2] + B[2] + C[2]) / 3);
 }
 
 bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
@@ -58,6 +52,9 @@ bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
     rec.t = t;
     rec.p = r.location(rec.t);
     rec.normal = normalize(n);
+    if (dot(r.direction(), n) > 0) {
+      rec.normal *= -1;
+    }
     rec.ka = ka;
     rec.kd = kd;
     rec.ks = ks;

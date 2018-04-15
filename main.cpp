@@ -22,6 +22,7 @@ void printHelp(int argc, char *argv[]) {
   std::cout << "-a, --antialias [factor]          enable antialiasing and set"
                " AA factor. Note # of samples is factor^2.\n"
                "                                  (default: no antialiasing)\n";
+  std::cout << "-i, --input [filename]            set input .obj file\n";
   std::cout << "-o, --output [filename]           set output file"
                " (default: output.png)\n";
   std::cout << "-w, --width [pixels]              set output image width"
@@ -46,7 +47,9 @@ void printHelp(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
   bool use_default = false;
-  std::string filename = "output.png";
+  std::string output_filename = "output.png";
+  std::string input_filename;
+  bool input_mesh = false;
   std::string s;
   bool ortho = true;
   int width = 1000;
@@ -73,6 +76,7 @@ int main(int argc, char *argv[]) {
         {"projection", required_argument, 0, 'p'},
         {"antialias", required_argument, 0, 'a'},
         {"output", required_argument, 0, 'o'},
+        {"input", required_argument, 0, 'i'},
         {"width", required_argument, 0, 'w'},
         {"height", required_argument, 0, 'h'},
         {"multithread", no_argument, 0, 'm'},
@@ -82,7 +86,7 @@ int main(int argc, char *argv[]) {
         {0, 0, 0, 0}};
     int option_index = 0;
     int c =
-        getopt_long(argc, argv, "dp:a:o:w:h:mbg:r:", long_options, &option_index);
+        getopt_long(argc, argv, "dp:a:o:i:w:h:mbg:r:", long_options, &option_index);
     if (c == -1) break;
     switch (c) {
       case 0:
@@ -111,7 +115,11 @@ int main(int argc, char *argv[]) {
         }
         break;
       case 'o':
-        filename = std::string(optarg);
+        output_filename = std::string(optarg);
+        break;
+      case 'i':
+        input_filename = std::string(optarg);
+        input_mesh = true;
         break;
       case 'w':
         width = std::stoi(optarg);
@@ -164,11 +172,11 @@ int main(int argc, char *argv[]) {
   l2.is = 0.9f * vec3(1, 1, 1);
   r.addLight(&l2);
 
-  // DirectionalLight l3;
-  // l3.direction = normalize(vec3(1, -1, 1));
-  // l3.id = 0.9f * vec3(1, 1, 1);
-  // l3.is = 0.9f * vec3(1, 1, 1);
-  // r.addLight(&l3);
+  DirectionalLight l3;
+  l3.direction = normalize(vec3(1, -1, -1));
+  l3.id = 0.9f * vec3(1, 1, 1);
+  l3.is = 0.9f * vec3(1, 1, 1);
+  r.addLight(&l3);
   
   // PointLight l4;
   // l4.point = vec3(0,0,0);
@@ -210,8 +218,14 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  // Triangle t1(vec3(1,0,0.5), vec3(0,1,0), vec3(1,1,0));
+  // t1.ka = vec3(0,1,0);
+  // t1.kd = t1.ka;
+  // t1.ks = t1.ka;
+  // r.addHittable(&t1);
+
   // Planes
-  if (true) {
+  if (false) {
     CheckerPlane p1(vec3(0, -1, 0), normalize(vec3(0, 1, 0)));
     p1.ka1 = vec3(0.9, 0.9, 0.9);
     p1.ka2 = vec3(0.1, 0.1, 0.1);
@@ -225,18 +239,23 @@ int main(int argc, char *argv[]) {
     r.addHittable(&p1);
   }
 
+  if (input_mesh) {
+    r.read_file(input_filename);
+  }
+
   // set cameras
   float w = 1;
   float h = height/width;
-  r.set_persp_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), (float)w / h,
+  // r.set_persp_cam(vec3(0, -5, 0), vec3(0, 1, 0), vec3(0, 0, 1), (float)w / h,
+                   // 70);
+  r.set_persp_cam(vec3(-20, 0, 0), vec3(1, 0, 0), vec3(0, 1, 0), (float)w / h,
                    70);
   r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
 
-  // r.read_file("test.obj");
 
   // render and write image to file
   r.render();
-  r.outputImage(filename);
+  r.outputImage(output_filename);
 
   return 0;
 }

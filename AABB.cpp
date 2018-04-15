@@ -113,7 +113,7 @@ bool AABB::intersects_BB(const Ray& r, int index) const {
     tmax = ffmin(tmax, ffmax(t1, t2));
   }
 
-  return tmax > ffmax(tmin, 0.0);
+  return tmax >= ffmax(tmin, 0.0);
 }
 
 bool AABB::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
@@ -139,8 +139,8 @@ bool AABB::hit(const Ray& r, float t_min, float t_max, hit_record& rec,
       }
     }
   }
-  for (unsigned long i = 0; i < unbounded_list_.size(); ++i) {
-    if (unbounded_list_[i]->hit(r, t_min, closest, temp, l)) {
+  for (auto& h : unbounded_list_) {
+    if (h->hit(r, t_min, closest, temp, l)) {
       hit = true;
       closest = temp.t;
       rec = temp;

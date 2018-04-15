@@ -1,6 +1,6 @@
 #include "RayTracer.h"
 
-RayTracer::RayTracer() : image_(NULL) {
+RayTracer::RayTracer() : image_(nullptr), triangles(nullptr) {
   setImageSize(100, 100);
   antialias_ = false;
   aa_factor_ = 1;
@@ -12,7 +12,7 @@ RayTracer::RayTracer() : image_(NULL) {
   std::default_random_engine generator(seed);
 }
 
-RayTracer::RayTracer(unsigned w, unsigned h) : image_(NULL) {
+RayTracer::RayTracer(unsigned w, unsigned h) : image_(nullptr), triangles(nullptr) {
   setImageSize(w, h);
   antialias_ = false;
   aa_factor_ = 1;
@@ -62,7 +62,7 @@ void RayTracer::outputImage(std::string filename) const {
       std::chrono::high_resolution_clock::now();
   auto duration =
       std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-  std::cout << "done, took " << duration << "ms" << std::endl;
+  std::cout << "    ok, took " << duration << "ms" << std::endl;
 }
 
 void RayTracer::setImageSize(unsigned w, unsigned h) {
@@ -84,7 +84,6 @@ void RayTracer::renderSection(int thread, int num_threads) {
   if (thread == 0) {
     total_pixels = image_->width_ * image_->height_;
     last_percentage = -1;
-    std::ios::sync_with_stdio(false);
   }
 
   for (int j = 0; j < image_->height_; ++j) {
@@ -129,8 +128,10 @@ void RayTracer::renderSection(int thread, int num_threads) {
             float x_range_end = float(k + 1) / float(aa_factor_);
             float y_range_begin = float(l) / float(aa_factor_);
             float y_range_end = float(l + 1) / float(aa_factor_);
-            std::uniform_real_distribution<float> x_dist(x_range_begin, x_range_end);
-            std::uniform_real_distribution<float> y_dist(y_range_begin, y_range_end);
+            std::uniform_real_distribution<float> x_dist(x_range_begin,
+                                                         x_range_end);
+            std::uniform_real_distribution<float> y_dist(y_range_begin,
+                                                         y_range_end);
             float temp_u = u + x_dist(generator) / float(image_->width_);
             float temp_v = v + y_dist(generator) / float(image_->height_);
 
@@ -144,7 +145,7 @@ void RayTracer::renderSection(int thread, int num_threads) {
             col += color(r);
           }
         }
-        float aa_float_ = float(aa_factor_*aa_factor_);
+        float aa_float_ = float(aa_factor_ * aa_factor_);
         col /= vec3(aa_float_, aa_float_, aa_float_);
         vec3 &pix = image_->getPixel(i, j);
         pix = col;
@@ -154,7 +155,6 @@ void RayTracer::renderSection(int thread, int num_threads) {
   // finish progress indicator
   if (thread == 0) {
     std::cout << std::endl;
-    std::ios_base::sync_with_stdio();
   }
 }
 
@@ -177,7 +177,7 @@ void RayTracer::render() {
         std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-    std::cout << "done, took " << duration << "ms" << std::endl;
+    std::cout << "    ok, took " << duration << "ms" << std::endl;
   } else {
     hittables.generate();
   }
@@ -230,7 +230,7 @@ void RayTracer::render() {
       std::chrono::high_resolution_clock::now();
   auto duration =
       std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-  std::cout << "done, took " << duration << "ms" << std::endl;
+  std::cout << "    ok, took " << duration << "ms" << std::endl;
 }
 
 vec3 RayTracer::color(const Ray &r) {
@@ -240,13 +240,13 @@ vec3 RayTracer::color(const Ray &r) {
                           lights)) {
       return hittables_BVH.color(rec, lights, r.direction());
     } else {
-      return vec3(0, 0, 0);
+      return vec3(1, 0, 0);
     }
   } else {
     if (hittables.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
       return hittables.color(rec, lights, r.direction());
     } else {
-      return vec3(0, 0, 0);
+      return vec3(1, 0, 0);
     }
   }
 }
@@ -274,7 +274,11 @@ void RayTracer::addLight(Light *l) { lights.list.push_back(l); }
 void RayTracer::_clear() {
   if (image_) {
     delete image_;
-    image_ = NULL;
+    image_ = nullptr;
+  }
+  if (triangles) {
+    delete triangles;
+    triangles = nullptr;
   }
 }
 
@@ -290,12 +294,63 @@ void RayTracer::set_persp_cam(vec3 origin, vec3 direction, vec3 vup,
   p_cam.set_camera(origin, direction, vup, aspect, hfov);
 }
 
-void RayTracer::read_file(std::string filename) {
+void RayTracer::read_file(const std::string &filename) {
+  std::cout << "reading file..." << std::endl;
   std::ifstream infile;
   infile.open(filename);
+  std::vector<vec3> vertices;
+  triangles = new std::vector<Triangle>;
   std::string line;
-  
+
+  // while (!infile.eof()) {
+    // std::string type;
+    // std::string a;
+    // std::string b;
+    // std::string c;
+    // infile >> type >> a >> b >> c;
+
+    // if (type == "v") {
+      // float x = std::stof(a);
+      // float y = std::stof(b);
+      // float z = std::stof(c);
+      // vertices.push_back(vec3(x, y, z));
+    // } else if (type == "f") {
+      // int x = std::stoi(a);
+      // int y = std::stoi(b);
+      // int z = std::stoi(c);
+      // Triangle tri(vertices[x - 1], vertices[y - 1], vertices[z - 1]);
+      // triangles->push_back(tri);
+    // }
+  // }
   while (std::getline(infile, line)) {
-    std::cout << line << std::endl;
+    if (line[0] == '#') {
+      std::cout << "comment" << std::endl;
+      continue;
+    }
+    std::istringstream iss(line);
+    std::string type, a, b, c;
+    if (!(iss >> type >> a >> b >> c)) {
+      std::cout << "ERROR" << std::endl;
+    }
+    if (type == "v") {
+      float x = std::stof(a) * 10;
+      float y = std::stof(b) * 10;
+      float z = std::stof(c) * 10;
+      vertices.push_back(vec3(x, y, z));
+    } else if (type == "f") {
+      int x = std::stoi(a);
+      int y = std::stoi(b);
+      int z = std::stoi(c);
+      Triangle tri(vertices[x - 1], vertices[y - 1], vertices[z - 1]);
+      tri.ks = 0.3f * vec3(1,1,1);
+      tri.alpha = 20;
+      triangles->push_back(tri);
+    }
   }
+  for (Triangle& t : *triangles) {
+    addHittable(&t);
+  }
+  std::cout << "    ok" << std::endl;
+  std::cout << "    " <<  vertices.size() << " vertices" << std::endl;
+  std::cout << "    " <<  triangles->size() << " triangles" << std::endl;
 }

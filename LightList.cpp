@@ -22,6 +22,9 @@ bool LightList::AtPoint(const vec3 &p, std::vector<vec3> &ca,
     cs.insert(cs.end(), temp_cs.begin(), temp_cs.end());
 
     for (vec3& v : temp_d) {
+      if (isnan(v[0]) | isnan(v[1]) | isnan(v[2])) {
+        std::cout << "NAN" << std::endl;
+      }
       d.push_back(normalize(v));
     }
   }

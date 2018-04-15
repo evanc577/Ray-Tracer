@@ -70,14 +70,19 @@ class Hittable {
       // test for shadows
       hit_record shadow_rec;
       Ray shadow_ray(rec.p, light_d_list[i]);
+      if (isnan(light_d_list[i][0]) | isnan(light_d_list[i][1]) |
+          isnan(light_d_list[i][2])) {
+        d_list.emplace_back(0, 0, 0);
+        continue;
+      }
       if (hit_one(shadow_ray, 0.0001f, l.distance(rec.p))) {
-        d_list.push_back(vec3(0,0,0));
+        d_list.emplace_back(0, 0, 0);
         continue;
       }
 
       float dot_prod = dot(light_d_list[i], rec.normal);
       vec3 temp_diffuse;
-      if (dot_prod < 0.0001f) {
+      if (dot_prod < 0.0001f && dot_prod > -0.0001f) {
         temp_diffuse = vec3(0, 0, 0);
         pos_diffuse_list[i] = false;
       } else {
