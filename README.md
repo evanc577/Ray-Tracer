@@ -42,7 +42,9 @@ Other Goodies:
 
 * Multithreading support
 
-* Specify output file
+* Shadows
+
+* Basic .obj file import
 
 ## Sample Images
 
@@ -53,6 +55,10 @@ Perspective image
 Orthographic image
 
 ![Orthographic Image](images/orthographic.png)
+
+Imported Mesh
+
+![Mesh Image](images/dragon.png)
 
 ## Bounding Volume Hierarchy
 

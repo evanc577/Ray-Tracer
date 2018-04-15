@@ -240,13 +240,13 @@ vec3 RayTracer::color(const Ray &r) {
                           lights)) {
       return hittables_BVH.color(rec, lights, r.direction());
     } else {
-      return vec3(1, 0, 0);
+      return vec3(0, 0, 0);
     }
   } else {
     if (hittables.hit(r, 0.0, std::numeric_limits<float>::max(), rec, lights)) {
       return hittables.color(rec, lights, r.direction());
     } else {
-      return vec3(1, 0, 0);
+      return vec3(0, 0, 0);
     }
   }
 }
@@ -342,8 +342,6 @@ void RayTracer::read_file(const std::string &filename) {
       int y = std::stoi(b);
       int z = std::stoi(c);
       Triangle tri(vertices[x - 1], vertices[y - 1], vertices[z - 1]);
-      tri.ks = 0.3f * vec3(1,1,1);
-      tri.alpha = 20;
       triangles->push_back(tri);
     }
   }

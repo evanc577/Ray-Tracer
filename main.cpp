@@ -224,20 +224,20 @@ int main(int argc, char *argv[]) {
   // t1.ks = t1.ka;
   // r.addHittable(&t1);
 
+#if 0
   // Planes
-  if (false) {
-    CheckerPlane p1(vec3(0, -1, 0), normalize(vec3(0, 1, 0)));
-    p1.ka1 = vec3(0.9, 0.9, 0.9);
-    p1.ka2 = vec3(0.1, 0.1, 0.1);
-    p1.kd1 = p1.ka1;
-    p1.kd2 = p1.ka2;
-    p1.ks1 = vec3(0.1, 0.1, 0.1);
-    p1.ks2 = p1.ks1;
-    p1.alpha1 = 3;
-    p1.alpha2 = 3;
-    p1.tile_size = 1.5;
-    r.addHittable(&p1);
-  }
+  CheckerPlane p1(vec3(0, -1, 0), normalize(vec3(0, 1, 0)));
+  p1.ka1 = vec3(0.9, 0.9, 0.9);
+  p1.ka2 = vec3(0.1, 0.1, 0.1);
+  p1.kd1 = p1.ka1;
+  p1.kd2 = p1.ka2;
+  p1.ks1 = vec3(0.1, 0.1, 0.1);
+  p1.ks2 = p1.ks1;
+  p1.alpha1 = 3;
+  p1.alpha2 = 3;
+  p1.tile_size = 1.5;
+  r.addHittable(&p1);
+#endif
 
   if (input_mesh) {
     r.read_file(input_filename);
@@ -248,7 +248,7 @@ int main(int argc, char *argv[]) {
   float h = height/width;
   // r.set_persp_cam(vec3(0, -5, 0), vec3(0, 1, 0), vec3(0, 0, 1), (float)w / h,
                    // 70);
-  r.set_persp_cam(vec3(-20, 0, 0), vec3(1, 0, 0), vec3(0, 1, 0), (float)w / h,
+  r.set_persp_cam(vec3(20, 0, 0), vec3(-1, 0, 0), vec3(0, 1, 0), (float)w / h,
                    70);
   r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
 
