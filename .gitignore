@@ -4,5 +4,5 @@
 # zip files
 *.zip
 
-.png
-.obj
+*.png
+*.obj
