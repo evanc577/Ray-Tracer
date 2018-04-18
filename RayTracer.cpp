@@ -302,26 +302,6 @@ void RayTracer::read_file(const std::string &filename) {
   triangles = new std::vector<Triangle>;
   std::string line;
 
-  // while (!infile.eof()) {
-    // std::string type;
-    // std::string a;
-    // std::string b;
-    // std::string c;
-    // infile >> type >> a >> b >> c;
-
-    // if (type == "v") {
-      // float x = std::stof(a);
-      // float y = std::stof(b);
-      // float z = std::stof(c);
-      // vertices.push_back(vec3(x, y, z));
-    // } else if (type == "f") {
-      // int x = std::stoi(a);
-      // int y = std::stoi(b);
-      // int z = std::stoi(c);
-      // Triangle tri(vertices[x - 1], vertices[y - 1], vertices[z - 1]);
-      // triangles->push_back(tri);
-    // }
-  // }
   while (std::getline(infile, line)) {
     if (line[0] == '#') {
       std::cout << "comment" << std::endl;

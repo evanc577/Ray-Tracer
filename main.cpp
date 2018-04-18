@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
 
 #if 0
   // Planes
-  CheckerPlane p1(vec3(0, -1, 0), normalize(vec3(0, 1, 0)));
+  CheckerPlane p1(vec3(0, -5.5, 0), normalize(vec3(0, 1, 0)));
   p1.ka1 = vec3(0.9, 0.9, 0.9);
   p1.ka2 = vec3(0.1, 0.1, 0.1);
   p1.kd1 = p1.ka1;
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
   p1.ks2 = p1.ks1;
   p1.alpha1 = 3;
   p1.alpha2 = 3;
-  p1.tile_size = 1.5;
+  p1.tile_size = 5;
   r.addHittable(&p1);
 #endif
 
@@ -243,12 +243,13 @@ int main(int argc, char *argv[]) {
     r.read_file(input_filename);
   }
 
+#if 0
   // set cameras
   float w = 1;
-  float h = height/width;
+  float h = float(height)/width;
   // r.set_persp_cam(vec3(0, -5, 0), vec3(0, 1, 0), vec3(0, 0, 1), (float)w / h,
                    // 70);
-  r.set_persp_cam(vec3(20, 0, 0), vec3(-1, 0, 0), vec3(0, 1, 0), (float)w / h,
+  r.set_persp_cam(vec3(20, 0.5, 0), vec3(-1, 0, 0), vec3(0, 1, 0), float(w) / h,
                    70);
   r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
 
@@ -256,6 +257,43 @@ int main(int argc, char *argv[]) {
   // render and write image to file
   r.render();
   r.outputImage(output_filename);
+#else
+  // set cameras
+  float w = 1;
+  float h = float(height)/width;
+  std::string filename;
+  int num_frames = 360;
+  int total_zero_pad = 0;
+  int temp_outer = num_frames;
+  do {
+    ++total_zero_pad;
+    temp_outer /= 10;
+  } while (temp_outer);
+
+  for (int i = 0; i < num_frames; ++i) {
+    int zero_pad = 0;
+    int temp = i;
+    do {
+      ++zero_pad;
+      temp /= 10;
+    } while (temp);
+    std::string num = std::to_string(i);
+    for (int j = 0; j < total_zero_pad - zero_pad; ++j) {
+      num = "0" + num;
+    }
+    size_t found = output_filename.find(".png");
+    filename = output_filename;
+    filename.insert(found, num);
+
+    float x_coord = 20 * cos(i * M_PI / 180);
+    float z_coord = 20 * sin(i * M_PI / 180);
+    vec3 coords(x_coord, 0.5, z_coord);
+    vec3 dir = normalize(vec3(0, 0.5, 0) - coords);
+    r.set_persp_cam(coords, dir, vec3(0, 1, 0), float(w) / h, 70);
+    r.render();
+    r.outputImage(filename);
+  }
+#endif
 
   return 0;
 }
