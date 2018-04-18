@@ -29,9 +29,7 @@ class RayTracer {
   };
   RayTracer();
   RayTracer(unsigned w, unsigned h);
-  RayTracer(const RayTracer &other);
   ~RayTracer();
-  RayTracer &operator=(const RayTracer &other);
 
   void outputImage(std::string filename) const;
 
@@ -69,14 +67,12 @@ class RayTracer {
   PerspCamera p_cam;
   OrthoCamera o_cam;
 
+  bool smooth;
+
  private:
-  void _copy(const RayTracer &other);
   void _clear();
 
   void renderSection(int thread, int num_threads);
-
-  void linearToSRGB();
-  float sRGB_max;
 
   vec3 color(const Ray &r);
   vec3 randomInUnitSphere();

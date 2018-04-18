@@ -7,33 +7,32 @@ RayTracer::RayTracer() : image_(nullptr), triangles(nullptr) {
   multithread = false;
   ortho = true;
   BVH = true;
+  smooth = false;
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
 }
 
-RayTracer::RayTracer(unsigned w, unsigned h) : image_(nullptr), triangles(nullptr) {
+RayTracer::RayTracer(unsigned w, unsigned h) : RayTracer() {
   setImageSize(w, h);
-  antialias_ = false;
-  aa_factor_ = 1;
-  multithread = false;
-  ortho = true;
-  BVH = true;
-
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::default_random_engine generator(seed);
 }
-
-RayTracer::RayTracer(const RayTracer &other) { _copy(other); }
 
 RayTracer::~RayTracer() { _clear(); }
 
-RayTracer &RayTracer::operator=(const RayTracer &other) {
-  if (this != &other) {
-    _clear();
-    _copy(other);
+void RayTracer::setImageSize(unsigned w, unsigned h) {
+  _clear();
+  image_ = new Image(w, h);
+}
+
+void RayTracer::_clear() {
+  if (image_) {
+    delete image_;
+    image_ = nullptr;
   }
-  return *this;
+  if (triangles) {
+    delete triangles;
+    triangles = nullptr;
+  }
 }
 
 void RayTracer::outputImage(std::string filename) const {
@@ -63,11 +62,6 @@ void RayTracer::outputImage(std::string filename) const {
   auto duration =
       std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
   std::cout << "    ok, took " << duration << "ms" << std::endl;
-}
-
-void RayTracer::setImageSize(unsigned w, unsigned h) {
-  _clear();
-  image_ = new Image(w, h);
 }
 
 void RayTracer::renderSection(int thread, int num_threads) {
@@ -271,19 +265,6 @@ void RayTracer::clearHittables() {
 
 void RayTracer::addLight(Light *l) { lights.list.push_back(l); }
 
-void RayTracer::_clear() {
-  if (image_) {
-    delete image_;
-    image_ = nullptr;
-  }
-  if (triangles) {
-    delete triangles;
-    triangles = nullptr;
-  }
-}
-
-void RayTracer::_copy(const RayTracer &other) { image_ = other.image_; }
-
 void RayTracer::set_ortho_cam(vec3 origin, vec3 direction, vec3 vup,
                               float width, float height) {
   o_cam.set_camera(origin, direction, vup, width, height);
@@ -336,7 +317,7 @@ void RayTracer::read_file(const std::string &filename) {
   std::cout << "    ok" << std::endl;
   std::cout << "    " <<  vertices.size() << " vertices" << std::endl;
   std::cout << "    " <<  triangles->size() << " triangles" << std::endl;
-  generate_vertex_normals();
+  if (smooth) generate_vertex_normals();
 }
 
 void RayTracer::generate_vertex_normals() {

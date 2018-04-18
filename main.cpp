@@ -18,11 +18,12 @@ void printHelp(int argc, char *argv[]) {
   std::cout << "    --help                        show this help message\n";
   std::cout << "-d, --default                     use default parameters\n";
   std::cout << "-p, --projection [persp|ortho]    set projection"
-               " (default: ortho)\n";
+               " (default: persp)\n";
   std::cout << "-a, --antialias [factor]          enable antialiasing and set"
                " AA factor. Note # of samples is factor^2.\n"
                "                                  (default: no antialiasing)\n";
-  std::cout << "-i, --input [filename]            set input .obj file\n";
+  std::cout << "-i, --input [filename]            .obj file to import\n";
+  std::cout << "-s, --smooth                      enable smooth shading for imported meshes\n";
   std::cout << "-o, --output [filename]           set output file"
                " (default: output.png)\n";
   std::cout << "-w, --width [pixels]              set output image width"
@@ -37,12 +38,6 @@ void printHelp(int argc, char *argv[]) {
                " (default disabled)\n";
   std::cout << "-r, --radius [float]              radius of spheres"
                " (default 0.01) (to be used with --genspheres)\n";
-  std::cout << "\nExamples:\n";
-  std::cout << argv[0] << " -d\n";
-  std::cout << argv[0] << " -w 200 -h 200\n";
-  std::cout << argv[0]
-            << " -w 3840 -h 2160 -p persp "
-               "-o persp.png -ma 16\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -51,13 +46,14 @@ int main(int argc, char *argv[]) {
   std::string input_filename;
   bool input_mesh = false;
   std::string s;
-  bool ortho = true;
+  bool ortho = false;
   int width = 1000;
   int height = 1000;
   bool antialias = false;
   int aa_factor = 1;
   bool multithread = false;
   bool BVH = false;
+  bool smooth = false;
 
   bool genspheres = false;
   unsigned num_spheres = 0;
@@ -77,6 +73,7 @@ int main(int argc, char *argv[]) {
         {"antialias", required_argument, 0, 'a'},
         {"output", required_argument, 0, 'o'},
         {"input", required_argument, 0, 'i'},
+        {"smooth", no_argument, 0, 's'},
         {"width", required_argument, 0, 'w'},
         {"height", required_argument, 0, 'h'},
         {"multithread", no_argument, 0, 'm'},
@@ -86,7 +83,7 @@ int main(int argc, char *argv[]) {
         {0, 0, 0, 0}};
     int option_index = 0;
     int c =
-        getopt_long(argc, argv, "dp:a:o:i:w:h:mbg:r:", long_options, &option_index);
+        getopt_long(argc, argv, "dp:a:o:i:sw:h:mbg:r:", long_options, &option_index);
     if (c == -1) break;
     switch (c) {
       case 0:
@@ -120,6 +117,9 @@ int main(int argc, char *argv[]) {
       case 'i':
         input_filename = std::string(optarg);
         input_mesh = true;
+        break;
+      case 's':
+        smooth = true;
         break;
       case 'w':
         width = std::stoi(optarg);
@@ -160,6 +160,7 @@ int main(int argc, char *argv[]) {
   r.ortho = ortho;
   r.multithread = multithread;
   r.BVH = BVH;
+  r.smooth = smooth;
 
   // Lights
   AmbientLight l1;
