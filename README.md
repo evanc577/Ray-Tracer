@@ -1,6 +1,6 @@
 # Basic Ray Tracer
 
-Objects:
+###Objects:
 
 * Spheres
 
@@ -8,7 +8,7 @@ Objects:
 
 * Triangles
 
-Light Types:
+###Light Types:
 
 * Ambient lights
 
@@ -16,7 +16,7 @@ Light Types:
 
 * Point lights
 
-Lighting (via Phong Reflection Model):
+###Lighting (via Phong Reflection Model):
 
 * Ambient
 
@@ -26,13 +26,17 @@ Lighting (via Phong Reflection Model):
 
 * HDR tone-mapping via gamma-compression
 
-Projections:
+* Smooth (Phong) shading
+
+###Projections:
 
 * Orthographic
 
 * Perspective
 
-Other Goodies:
+* Adjustable camera
+
+###Other Goodies:
 
 * Acceleration of large number of objects via a bounded volume hierarchy
 
@@ -48,24 +52,28 @@ Other Goodies:
 
 ## Sample Images
 
-Perspective image
+###Perspective image
 
 ![Perspective Image](images/perspective.png)
 
-Orthographic image
+###Orthographic image
 
 ![Orthographic Image](images/orthographic.png)
 
-Imported Mesh
+###Imported Mesh
 
 ![Mesh Image](images/dragon.png)
 
+###Smooth Shading
+
+![Smooth Image](images/dragon_smooth.png)
+
 ## Bounding Volume Hierarchy
 
-Scenes with many objects can be accelerated with a BVH
+###Scenes with many objects can be accelerated with a BVH
 
 ![BVH Scalability](images/bvh_chart.png)
 
-Test with 2^24 spheres
+###Test with 2^24 spheres
 
 ![BVH Image](images/bvh.png)
