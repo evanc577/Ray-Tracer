@@ -5,9 +5,21 @@ inline float ffmax(float a, float b) { return a > b ? a : b; }
 inline float ffmax(float a, float b, float c) { return ffmax(ffmax(a, b), c); }
 inline float ffmin(float a, float b, float c) { return ffmin(ffmin(a, b), c); }
 
-Triangle::Triangle() : A(vec3(0, 0, 0)), B(vec3(0, 0, 0)), C(vec3(0, 0, 0)) {}
+Triangle::Triangle() {
+  A = vec3(0,0,0);
+  B = vec3(0,0,0);
+  C = vec3(0,0,0);
+  ia = 0;
+  ib = 0;
+  ic = 0;
+  smooth_shading = false;
+}
 
-Triangle::Triangle(vec3 a, vec3 b, vec3 c) : A(a), B(b), C(c) {}
+Triangle::Triangle(vec3 a, vec3 b, vec3 c) : Triangle() {
+  A = a;
+  B = b;
+  C = c;
+}
 
 inline bool Triangle::is_bounded() const { return true; }
 
@@ -28,31 +40,39 @@ bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
                    Light &l) const {
   (void)l;
 
-  vec3 edge1, edge2, n, h, s, q;
-  float a, f, u, v;
-  edge1 = B - A;
-  edge2 = C - A;
-  n = cross(edge1, edge2);  // vector normal to plane of triangle
+  vec3 AB = B - A;
+  vec3 AC = C - A;
+  vec3 pvec = cross(r.direction(), AC);
+  float det = dot(AB, pvec);
 
-  h = cross(r.direction(), edge2);
-  a = dot(edge1, h);
-  // if (a < 0.0001f && a > -0.0001f) return false;
+  float inv_det = 1 / det;
+  vec3 tvec = r.origin() - A;
+  float u = dot(tvec, pvec) * inv_det;
+  if (u < 0 || u > 1) {
+    return false;
+  }
 
-  f = 1 / a;
-  s = r.origin() - A;
-  u = f * dot(s, h);
-  if (u < 0.0f || u > 1.0f) return false;
-  q = cross(s, edge1);
-  v = f * dot(r.direction(), q);
-  if (v < 0.0f || u + v > 1.0f) return false;
+  vec3 qvec = cross(tvec, AB);
+  float v = dot(r.direction(), qvec) * inv_det;
+  if (v < 0 || u + v > 1) {
+    return false;
+  }
 
-  float t = f * dot(edge2, q);
+  float t = dot(AC, qvec) * inv_det;
+
+
 
   if (t < t_max && t > t_min) {
     rec.t = t;
     rec.p = r.location(rec.t);
-    rec.normal = normalize(n);
-    if (dot(r.direction(), n) > 0) {
+    vec3 norm;
+    if (smooth_shading) {
+      norm = u * normB + v * normC + (1 - u - v) * normA;
+    } else {
+      norm = cross(AB, AC);
+    }
+    rec.normal = normalize(norm);
+    if (dot(r.direction(), rec.normal) > 0) {
       rec.normal *= -1;
     }
     rec.ka = ka;
@@ -65,25 +85,25 @@ bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
 }
 
 bool Triangle::hit_one(const Ray &r, float t_min, float t_max) const {
-  vec3 edge1, edge2, n, h, s, q;
-  float a, f, u, v;
-  edge1 = B - A;
-  edge2 = C - A;
-  n = cross(edge1, edge2);  // vector normal to plane of triangle
+  vec3 AB = B - A;
+  vec3 AC = C - A;
+  vec3 pvec = cross(r.direction(), AC);
+  float det = dot(AB, pvec);
 
-  h = cross(r.direction(), edge2);
-  a = dot(edge1, h);
-  // if (a < 0.0001f && a > -0.0001f) return false;
+  float inv_det = 1 / det;
+  vec3 tvec = r.origin() - A;
+  float u = dot(tvec, pvec) * inv_det;
+  if (u < 0 || u > 1) {
+    return false;
+  }
 
-  f = 1 / a;
-  s = r.origin() - A;
-  u = f * dot(s, h);
-  if (u < 0.0f || u > 1.0f) return false;
-  q = cross(s, edge1);
-  v = f * dot(r.direction(), q);
-  if (v < 0.0f || u + v > 1.0f) return false;
+  vec3 qvec = cross(tvec, AB);
+  float v = dot(r.direction(), qvec) * inv_det;
+  if (v < 0 || u + v > 1) {
+    return false;
+  }
 
-  float t = f * dot(edge2, q);
+  float t = dot(AC, qvec) * inv_det;
 
   if (t < t_max && t > t_min) {
     return true;

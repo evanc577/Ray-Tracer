@@ -21,5 +21,17 @@ class Triangle : public Hittable {
   vec3 A;
   vec3 B;
   vec3 C;
+
+  bool smooth_shading;
+
+  // vertex indices (for calculating vertex normals)
+  size_t ia;
+  size_t ib;
+  size_t ic;
+
+  // vertex normals
+  vec3 normA;
+  vec3 normB;
+  vec3 normC;
 };
 #endif

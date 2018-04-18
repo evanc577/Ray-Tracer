@@ -298,7 +298,6 @@ void RayTracer::read_file(const std::string &filename) {
   std::cout << "reading file..." << std::endl;
   std::ifstream infile;
   infile.open(filename);
-  std::vector<vec3> vertices;
   triangles = new std::vector<Triangle>;
   std::string line;
 
@@ -316,12 +315,18 @@ void RayTracer::read_file(const std::string &filename) {
       float x = std::stof(a);
       float y = std::stof(b);
       float z = std::stof(c);
-      vertices.push_back(vec3(x, y, z));
+      vertex v;
+      v.point = vec3(x,y,z);
+      v.normal = vec3(0,0,0);
+      vertices.push_back(v);
     } else if (type == "f") {
-      int x = std::stoi(a);
-      int y = std::stoi(b);
-      int z = std::stoi(c);
-      Triangle tri(vertices[x - 1], vertices[y - 1], vertices[z - 1]);
+      int x = std::stoi(a) - 1;
+      int y = std::stoi(b) - 1;
+      int z = std::stoi(c) - 1;
+      Triangle tri(vertices[x].point, vertices[y].point, vertices[z].point);
+      tri.ia = x;
+      tri.ib = y;
+      tri.ic = z;
       triangles->push_back(tri);
     }
   }
@@ -331,4 +336,33 @@ void RayTracer::read_file(const std::string &filename) {
   std::cout << "    ok" << std::endl;
   std::cout << "    " <<  vertices.size() << " vertices" << std::endl;
   std::cout << "    " <<  triangles->size() << " triangles" << std::endl;
+  generate_vertex_normals();
+}
+
+void RayTracer::generate_vertex_normals() {
+  for (Triangle& t : *triangles) {
+    t.smooth_shading = true;
+
+    const size_t ia = t.ia;
+    const size_t ib = t.ib;
+    const size_t ic = t.ic;
+
+    const vec3 e1 = vertices[ia].point - vertices[ib].point;
+    const vec3 e2 = vertices[ic].point - vertices[ib].point;
+    const vec3 norm = cross(e1,e2);
+
+    vertices[ia].normal += norm;
+    vertices[ib].normal += norm;
+    vertices[ic].normal += norm;
+  }
+
+  for (vertex& v : vertices) {
+    v.normal = normalize(v.normal);
+  }
+
+  for (Triangle& t : *triangles) {
+    t.normA = vertices[t.ia].normal;
+    t.normB = vertices[t.ib].normal;
+    t.normC = vertices[t.ic].normal;
+  }
 }

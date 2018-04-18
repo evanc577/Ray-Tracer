@@ -23,6 +23,10 @@
 
 class RayTracer {
  public:
+  struct vertex {
+    vec3 point;
+    vec3 normal;
+  };
   RayTracer();
   RayTracer(unsigned w, unsigned h);
   RayTracer(const RayTracer &other);
@@ -47,6 +51,8 @@ class RayTracer {
                      float hfov);
 
   void read_file(const std::string& filename);
+
+  void generate_vertex_normals();
 
   Image *image_;
   void render();
@@ -80,6 +86,8 @@ class RayTracer {
 
   LightList lights;
 
+
+  std::vector<vertex> vertices;
   std::vector<Triangle>* triangles;
 
   std::default_random_engine generator;
