@@ -313,9 +313,9 @@ void RayTracer::read_file(const std::string &filename) {
       std::cout << "ERROR" << std::endl;
     }
     if (type == "v") {
-      float x = std::stof(a) * 10;
-      float y = std::stof(b) * 10;
-      float z = std::stof(c) * 10;
+      float x = std::stof(a);
+      float y = std::stof(b);
+      float z = std::stof(c);
       vertices.push_back(vec3(x, y, z));
     } else if (type == "f") {
       int x = std::stoi(a);

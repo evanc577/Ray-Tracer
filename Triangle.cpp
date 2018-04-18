@@ -36,7 +36,7 @@ bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
 
   h = cross(r.direction(), edge2);
   a = dot(edge1, h);
-  if (a < 0.0001f && a > -0.0001f) return false;
+  // if (a < 0.0001f && a > -0.0001f) return false;
 
   f = 1 / a;
   s = r.origin() - A;
@@ -73,7 +73,7 @@ bool Triangle::hit_one(const Ray &r, float t_min, float t_max) const {
 
   h = cross(r.direction(), edge2);
   a = dot(edge1, h);
-  if (a < 0.0001f && a > -0.0001f) return false;
+  // if (a < 0.0001f && a > -0.0001f) return false;
 
   f = 1 / a;
   s = r.origin() - A;

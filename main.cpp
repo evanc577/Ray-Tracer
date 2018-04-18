@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
 
 #if 0
   // Planes
-  CheckerPlane p1(vec3(0, -5.5, 0), normalize(vec3(0, 1, 0)));
+  CheckerPlane p1(vec3(0, -.55, 0), normalize(vec3(0, 1, 0)));
   p1.ka1 = vec3(0.9, 0.9, 0.9);
   p1.ka2 = vec3(0.1, 0.1, 0.1);
   p1.kd1 = p1.ka1;
@@ -243,13 +243,11 @@ int main(int argc, char *argv[]) {
     r.read_file(input_filename);
   }
 
-#if 0
+#if 1
   // set cameras
   float w = 1;
   float h = float(height)/width;
-  // r.set_persp_cam(vec3(0, -5, 0), vec3(0, 1, 0), vec3(0, 0, 1), (float)w / h,
-                   // 70);
-  r.set_persp_cam(vec3(20, 0.5, 0), vec3(-1, 0, 0), vec3(0, 1, 0), float(w) / h,
+  r.set_persp_cam(vec3(2, 0.05, 0), vec3(-1, 0, 0), vec3(0, 1, 0), float(w) / h,
                    70);
   r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
 
@@ -285,9 +283,9 @@ int main(int argc, char *argv[]) {
     filename = output_filename;
     filename.insert(found, num);
 
-    float x_coord = 20 * cos(i * M_PI / 180);
-    float z_coord = 20 * sin(i * M_PI / 180);
-    vec3 coords(x_coord, 0.5, z_coord);
+    float x_coord = 2 * cos(i * M_PI / 180);
+    float z_coord = 2 * sin(i * M_PI / 180);
+    vec3 coords(x_coord, 0.05, z_coord);
     vec3 dir = normalize(vec3(0, 0.5, 0) - coords);
     r.set_persp_cam(coords, dir, vec3(0, 1, 0), float(w) / h, 70);
     r.render();

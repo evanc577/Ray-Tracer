@@ -80,31 +80,31 @@ class Hittable {
         continue;
       }
 
-      float dot_prod = dot(light_d_list[i], rec.normal);
+      // float dot_prod = dot(light_d_list[i], rec.normal);
       vec3 temp_diffuse;
-      if (dot_prod < 0.0001f && dot_prod > -0.0001f) {
+      // if (dot_prod < 0.0001f && dot_prod > -0.0001f) {
+      // temp_diffuse = vec3(0, 0, 0);
+      // pos_diffuse_list[i] = false;
+      // } else {
+      temp_diffuse = cd_list[i] * rec.kd * dot(light_d_list[i], rec.normal);
+
+      if (isnan(temp_diffuse[0]) || isnan(temp_diffuse[1]) ||
+          isnan(temp_diffuse[2])) {
         temp_diffuse = vec3(0, 0, 0);
         pos_diffuse_list[i] = false;
-      } else {
-        temp_diffuse = cd_list[i] * rec.kd * dot(light_d_list[i], rec.normal);
-
-        if (isnan(temp_diffuse[0]) || isnan(temp_diffuse[1]) ||
-            isnan(temp_diffuse[2])) {
-          temp_diffuse = vec3(0, 0, 0);
-          pos_diffuse_list[i] = false;
-        }
-
-        pos_diffuse_list[i] = true;
-
-        if (temp_diffuse[0] < 0) temp_diffuse[0] = 0;
-        if (temp_diffuse[1] < 0) temp_diffuse[1] = 0;
-        if (temp_diffuse[2] < 0) temp_diffuse[2] = 0;
-
-        if (temp_diffuse[0] <= 0.0001f && temp_diffuse[1] <= 0.0001f &&
-            temp_diffuse[2] <= 0.0001f) {
-          pos_diffuse_list[i] = false;
-        }
       }
+
+      pos_diffuse_list[i] = true;
+
+      if (temp_diffuse[0] < 0) temp_diffuse[0] = 0;
+      if (temp_diffuse[1] < 0) temp_diffuse[1] = 0;
+      if (temp_diffuse[2] < 0) temp_diffuse[2] = 0;
+
+      if (temp_diffuse[0] <= 0.0f && temp_diffuse[1] <= 0.0f &&
+          temp_diffuse[2] <= 0.0f) {
+        pos_diffuse_list[i] = false;
+      }
+      // }
       d_list.push_back(temp_diffuse);
     }
 
