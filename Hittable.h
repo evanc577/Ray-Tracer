@@ -1,6 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include <cmath>
 #include <limits>
 #include <tuple>
 #include "Light.h"
@@ -70,8 +71,8 @@ class Hittable {
       // test for shadows
       hit_record shadow_rec;
       Ray shadow_ray(rec.p, light_d_list[i]);
-      if (isnan(light_d_list[i][0]) | isnan(light_d_list[i][1]) |
-          isnan(light_d_list[i][2])) {
+      if (std::isnan(light_d_list[i][0]) | std::isnan(light_d_list[i][1]) |
+          std::isnan(light_d_list[i][2])) {
         d_list.emplace_back(0, 0, 0);
         continue;
       }
@@ -88,8 +89,8 @@ class Hittable {
       // } else {
       temp_diffuse = cd_list[i] * rec.kd * dot(light_d_list[i], rec.normal);
 
-      if (isnan(temp_diffuse[0]) || isnan(temp_diffuse[1]) ||
-          isnan(temp_diffuse[2])) {
+      if (std::isnan(temp_diffuse[0]) || std::isnan(temp_diffuse[1]) ||
+          std::isnan(temp_diffuse[2])) {
         temp_diffuse = vec3(0, 0, 0);
         pos_diffuse_list[i] = false;
       }
