@@ -60,8 +60,6 @@ bool Triangle::hit(const Ray &r, float t_min, float t_max, hit_record &rec,
 
   float t = dot(AC, qvec) * inv_det;
 
-
-
   if (t < t_max && t > t_min) {
     rec.t = t;
     rec.p = r.location(rec.t);
@@ -105,8 +103,5 @@ bool Triangle::hit_one(const Ray &r, float t_min, float t_max) const {
 
   float t = dot(AC, qvec) * inv_det;
 
-  if (t < t_max && t > t_min) {
-    return true;
-  }
-  return false;
+  return t < t_max && t > t_min;
 }

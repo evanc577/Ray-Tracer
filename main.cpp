@@ -23,7 +23,8 @@ void printHelp(int argc, char *argv[]) {
                " AA factor. Note # of samples is factor^2.\n"
                "                                  (default: no antialiasing)\n";
   std::cout << "-i, --input [filename]            .obj file to import\n";
-  std::cout << "-s, --smooth                      enable smooth shading for imported meshes\n";
+  std::cout << "-s, --smooth                      enable smooth shading for "
+               "imported meshes\n";
   std::cout << "-o, --output [filename]           set output file"
                " (default: output.png)\n";
   std::cout << "-w, --width [pixels]              set output image width"
@@ -59,6 +60,13 @@ int main(int argc, char *argv[]) {
   unsigned num_spheres = 0;
   float sphere_radius = 0.01f;
 
+  vec3 camera_location(0, 0.12, 0.22);
+  vec3 camera_direction(0, 0, -1);
+  vec3 camera_up(0, 1, 0);
+  float camera_fov = 70.0f;
+  float camera_width = 5;
+  float camera_height = 5;
+
   // parse options
   if (argc == 1) {
     printHelp(argc, argv);
@@ -82,8 +90,8 @@ int main(int argc, char *argv[]) {
         {"radius", required_argument, 0, 'r'},
         {0, 0, 0, 0}};
     int option_index = 0;
-    int c =
-        getopt_long(argc, argv, "dp:a:o:i:sw:h:mbg:r:", long_options, &option_index);
+    int c = getopt_long(argc, argv, "dp:a:o:i:sw:h:mbg:r:", long_options,
+                        &option_index);
     if (c == -1) break;
     switch (c) {
       case 0:
@@ -162,6 +170,8 @@ int main(int argc, char *argv[]) {
   r.BVH = BVH;
   r.smooth = smooth;
 
+  if (ortho) camera_height = camera_width * height / width;
+
   // Lights
   AmbientLight l1;
   l1.ia = 0.1f * vec3(1, 1, 1);
@@ -174,11 +184,23 @@ int main(int argc, char *argv[]) {
   r.addLight(&l2);
 
   DirectionalLight l3;
-  l3.direction = normalize(vec3(1, -1, -1));
-  l3.id = 0.9f * vec3(1, 1, 1);
-  l3.is = 0.9f * vec3(1, 1, 1);
+  l3.direction = normalize(vec3(-1, -1, -1));
+  l3.id = 0.4f * vec3(1, 1, 1);
+  l3.is = 0.4f * vec3(1, 1, 1);
   r.addLight(&l3);
-  
+
+  DirectionalLight l4;
+  l4.direction = normalize(vec3(1, -1, -1));
+  l4.id = 0.3f * vec3(1, 1, 1);
+  l4.is = 0.3f * vec3(1, 1, 1);
+  r.addLight(&l4);
+
+  DirectionalLight l5;
+  l5.direction = normalize(vec3(1, -1, 1));
+  l5.id = 0.2f * vec3(1, 1, 1);
+  l5.is = 0.2f * vec3(1, 1, 1);
+  r.addLight(&l5);
+
   // PointLight l4;
   // l4.point = vec3(0,0,0);
   // l4.id = 1.0f * vec3(1, 1, 1);
@@ -193,20 +215,20 @@ int main(int argc, char *argv[]) {
       float LO = -1.0f + sphere_radius;
       float HI = 1.0f + sphere_radius;
       float x = LO + static_cast<float>(rand()) /
-        (static_cast<float>(RAND_MAX / (HI - LO)));
+                         (static_cast<float>(RAND_MAX / (HI - LO)));
       float y = LO + static_cast<float>(rand()) /
-        (static_cast<float>(RAND_MAX / (HI - LO)));
+                         (static_cast<float>(RAND_MAX / (HI - LO)));
       float z = LO + static_cast<float>(rand()) /
-        (static_cast<float>(RAND_MAX / (HI - LO)));
+                         (static_cast<float>(RAND_MAX / (HI - LO)));
       Sphere s(vec3(x, y, z), sphere_radius);
       LO = 0.2f;
       HI = 1.0f;
       float r = LO + static_cast<float>(rand()) /
-        (static_cast<float>(RAND_MAX / (HI - LO)));
+                         (static_cast<float>(RAND_MAX / (HI - LO)));
       float g = LO + static_cast<float>(rand()) /
-        (static_cast<float>(RAND_MAX / (HI - LO)));
+                         (static_cast<float>(RAND_MAX / (HI - LO)));
       float b = LO + static_cast<float>(rand()) /
-        (static_cast<float>(RAND_MAX / (HI - LO)));
+                         (static_cast<float>(RAND_MAX / (HI - LO)));
       s.ka = vec3(r, g, b);
       s.kd = s.ka;
       s.alpha = 3;
@@ -240,59 +262,27 @@ int main(int argc, char *argv[]) {
   r.addHittable(&p1);
 #endif
 
+  r.mesh_kd = vec3(0.6, 0.6, 0.6);
+  r.mesh_ka = vec3(0.05, 0.05, 0.05);
+  r.mesh_ks = vec3(0.6, 0.6, 0.6);
+
   if (input_mesh) {
     r.read_file(input_filename);
   }
 
-#if 1
   // set cameras
   float w = 1;
-  float h = float(height)/width;
-  r.set_persp_cam(vec3(2, 0.05, 0), vec3(-1, 0, 0), vec3(0, 1, 0), float(w) / h,
-                   70);
-  r.set_ortho_cam(vec3(2, 2, 2), vec3(-1, -1, -1), vec3(0, 1, 0), 2, 2);
+  float h = float(height) / width;
+  r.set_persp_cam(camera_location, camera_direction, camera_up, float(w) / h,
+                  camera_fov);
+  r.set_ortho_cam(camera_location, camera_direction, camera_up, camera_width,
+                  camera_height);
 
+  r.gamma = 0.7;
 
   // render and write image to file
   r.render();
   r.outputImage(output_filename);
-#else
-  // set cameras
-  float w = 1;
-  float h = float(height)/width;
-  std::string filename;
-  int num_frames = 360;
-  int total_zero_pad = 0;
-  int temp_outer = num_frames;
-  do {
-    ++total_zero_pad;
-    temp_outer /= 10;
-  } while (temp_outer);
-
-  for (int i = 0; i < num_frames; ++i) {
-    int zero_pad = 0;
-    int temp = i;
-    do {
-      ++zero_pad;
-      temp /= 10;
-    } while (temp);
-    std::string num = std::to_string(i);
-    for (int j = 0; j < total_zero_pad - zero_pad; ++j) {
-      num = "0" + num;
-    }
-    size_t found = output_filename.find(".png");
-    filename = output_filename;
-    filename.insert(found, num);
-
-    float x_coord = 2 * cos(i * M_PI / 180);
-    float z_coord = 2 * sin(i * M_PI / 180);
-    vec3 coords(x_coord, 0.05, z_coord);
-    vec3 dir = normalize(vec3(0, 0.5, 0) - coords);
-    r.set_persp_cam(coords, dir, vec3(0, 1, 0), float(w) / h, 70);
-    r.render();
-    r.outputImage(filename);
-  }
-#endif
 
   return 0;
 }

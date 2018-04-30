@@ -8,6 +8,12 @@ RayTracer::RayTracer() : image_(nullptr), triangles(nullptr) {
   ortho = true;
   BVH = true;
   smooth = false;
+  gamma = 0.3f;
+
+  mesh_ka = vec3(1, 1, 1);
+  mesh_kd = mesh_ka;
+  mesh_ks = 0.5f * vec3(1, 1, 1);
+  mesh_alpha = 10.0f;
 
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
@@ -201,7 +207,7 @@ void RayTracer::render() {
   }
 
   // scale values to avoid exceeding 1
-  float gamma = 0.9f;
+  float gamma = 0.3f;
   float max_val;
   if (BVH) {
     max_val = hittables_BVH.max_val;
@@ -284,14 +290,11 @@ void RayTracer::read_file(const std::string &filename) {
 
   while (std::getline(infile, line)) {
     if (line[0] == '#') {
-      std::cout << "comment" << std::endl;
       continue;
     }
     std::istringstream iss(line);
     std::string type, a, b, c;
-    if (!(iss >> type >> a >> b >> c)) {
-      std::cout << "ERROR" << std::endl;
-    }
+    iss >> type >> a >> b >> c;
     if (type == "v") {
       float x = std::stof(a);
       float y = std::stof(b);
@@ -308,6 +311,11 @@ void RayTracer::read_file(const std::string &filename) {
       tri.ia = x;
       tri.ib = y;
       tri.ic = z;
+      tri.ka = mesh_ka;
+      tri.kd = mesh_kd;
+      tri.ks = mesh_ks;
+      tri.alpha = mesh_alpha;
+
       triangles->push_back(tri);
     }
   }

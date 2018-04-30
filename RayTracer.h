@@ -48,12 +48,16 @@ class RayTracer {
   void set_persp_cam(vec3 origin, vec3 direction, vec3 vup, float aspect,
                      float hfov);
 
+  // read .obj file
   void read_file(const std::string& filename);
+  vec3 mesh_ka, mesh_kd, mesh_ks;
+  float mesh_alpha;
 
   void generate_vertex_normals();
 
-  Image *image_;
   void render();
+
+  Image *image_;
 
   bool ortho;
 
@@ -67,21 +71,24 @@ class RayTracer {
   PerspCamera p_cam;
   OrthoCamera o_cam;
 
+  // enable/disable smooth (Phong) shading
   bool smooth;
+
+  // for tone mapping
+  float gamma;
 
  private:
   void _clear();
 
+  // for use with multithreading
   void renderSection(int thread, int num_threads);
 
   vec3 color(const Ray &r);
-  vec3 randomInUnitSphere();
 
   HittableList hittables;
   AABB hittables_BVH;
 
   LightList lights;
-
 
   std::vector<vertex> vertices;
   std::vector<Triangle>* triangles;
